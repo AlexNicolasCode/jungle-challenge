@@ -22,13 +22,13 @@ export class UpdateTaskByIdUseCase {
     taskId: string,
     task: UpdateTaskByIdInputDto,
   ): Promise<UpdateTaskByIdOutputDto> {
+    const storagedTask = await this.loadTaskByIdService.loadTaskById({
+      taskId,
+    });
+    if (!storagedTask) {
+      throw new NotFoundException('Task not found');
+    }
     try {
-      const storagedTask = await this.loadTaskByIdService.loadTaskById({
-        taskId,
-      });
-      if (!storagedTask) {
-        throw new NotFoundException('Task not found');
-      }
       await this.updateTaskByIdService.updateTaskById({ taskId, task });
       return null;
     } catch (error) {

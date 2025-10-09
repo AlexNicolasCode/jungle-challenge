@@ -16,11 +16,11 @@ export class LoadTaskByIdUseCase {
   constructor(private readonly loadTaskByIdService: LoadTaskByIdService) {}
 
   async execute(dto: LoadTaskByIdInputDto): Promise<LoadTaskByIdOutputDto> {
+    const task = await this.loadTaskByIdService.loadTaskById(dto);
+    if (!task) {
+      throw new NotFoundException('Task not found');
+    }
     try {
-      const task = await this.loadTaskByIdService.loadTaskById(dto);
-      if (!task) {
-        throw new NotFoundException('Task not found');
-      }
       return task;
     } catch (error) {
       this.logger.error(error);
