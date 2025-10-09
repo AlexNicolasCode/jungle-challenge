@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
+  OneToMany,
 } from 'typeorm';
 
 import { TaskEntity } from './task.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity('users')
 export class UserEntity {
@@ -25,4 +27,7 @@ export class UserEntity {
 
   @ManyToMany(() => TaskEntity, (task) => task.users)
   tasks: TaskEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.author)
+  comments: CommentEntity[];
 }

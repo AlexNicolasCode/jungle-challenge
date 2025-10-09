@@ -7,10 +7,12 @@ import {
   DeleteDateColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 import { UserEntity } from './user.entity';
+import { CommentEntity } from './comment.entity';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -39,6 +41,9 @@ export class TaskEntity {
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' },
   })
   users: UserEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.task)
+  comments: CommentEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

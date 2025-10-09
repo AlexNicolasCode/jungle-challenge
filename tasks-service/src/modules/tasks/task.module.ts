@@ -39,5 +39,6 @@ import { TaskRepository } from 'src/database/repositories';
     CreateTaskService,
     TaskRepository,
   ],
+  exports: [LoadTaskByIdService],
 })
 export class TaskModule {}
