@@ -17,6 +17,7 @@ import {
   DeleteTaskByIdService,
   LoadTaskByIdService,
   LoadTasksService,
+  NotifyTaskCreatedService,
   NotifyTaskUpdatedService,
   UpdateTaskByIdService,
 } from './services';
@@ -47,6 +48,7 @@ import { TaskRepository } from 'src/database/repositories';
     LoadTaskByIdUseCase,
     CreateTaskUseCase,
     LoadTasksUseCase,
+    NotifyTaskCreatedService,
     DeleteTaskByIdService,
     UpdateTaskByIdService,
     LoadTasksService,
