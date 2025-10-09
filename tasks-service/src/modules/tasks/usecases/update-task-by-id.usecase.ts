@@ -5,7 +5,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { LoadTaskByIdService, UpdateTaskByIdService } from '../services';
+import {
+  LoadTaskByIdService,
+  NotifyTaskUpdatedService,
+  UpdateTaskByIdService,
+} from '../services';
 import { UpdateTaskByIdInputDto } from '../dtos/inputs';
 import { UpdateTaskByIdOutputDto } from '../dtos/outputs';
 
@@ -16,6 +20,7 @@ export class UpdateTaskByIdUseCase {
   constructor(
     private readonly loadTaskByIdService: LoadTaskByIdService,
     private readonly updateTaskByIdService: UpdateTaskByIdService,
+    private readonly notifyTaskUpdatedService: NotifyTaskUpdatedService,
   ) {}
 
   async execute(
@@ -30,6 +35,14 @@ export class UpdateTaskByIdUseCase {
     }
     try {
       await this.updateTaskByIdService.updateTaskById({ taskId, task });
+      console.log(storagedTask.users);
+      for (const users of storagedTask.users) {
+        this.notifyTaskUpdatedService.notifyTaskUpdate({
+          taskId,
+          authorId: users.id,
+          taskTitle: task.title,
+        });
+      }
       return null;
     } catch (error) {
       this.logger.error(error);

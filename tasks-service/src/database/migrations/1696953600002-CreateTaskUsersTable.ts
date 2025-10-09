@@ -26,11 +26,6 @@ export class CreateTaskUsersTable1696953600002 implements MigrationInterface {
             type: 'uuid',
             isPrimary: true,
           },
-          {
-            name: 'user_name',
-            type: 'varchar',
-            isNullable: false,
-          },
         ],
       }),
       true,
