@@ -54,10 +54,46 @@ export class CommentRepository {
     await this.commentRepository.softDelete(id);
   }
 
-  async loadAll(): Promise<CommentEntity[]> {
-    return this.commentRepository.find({
-      relations: ['author'],
-      order: { createdAt: 'DESC' },
-    });
+  async loadAll({
+    page,
+    size,
+    where,
+  }: {
+    page: number;
+    size: number;
+    where: {
+      authorId?: string;
+    };
+  }): Promise<{ comments: CommentEntity[]; count: number }> {
+    const query = this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.author', 'author');
+    const skip = (page - 1) * size;
+    query.skip(skip);
+    query.take(size);
+    const fieldMapper: Record<
+      string,
+      { query: string; variables: Record<string, any> }
+    > = {
+      authorId: {
+        query: 'comment.authorId ILIKE :authorId',
+        variables: { authorId: `%${where.authorId}%` },
+      },
+    };
+    const fields: string[] = Object.keys(where);
+    for (const field of fields) {
+      const whereParams = fieldMapper[field];
+      if (
+        !where[field] ||
+        !whereParams ||
+        !whereParams.query ||
+        !whereParams.variables
+      ) {
+        continue;
+      }
+      query.andWhere(whereParams.query, whereParams.variables);
+    }
+    const [comments, count] = await query.getManyAndCount();
+    return { count, comments };
   }
 }

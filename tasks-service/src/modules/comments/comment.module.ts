@@ -5,8 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentController } from './comment.controller';
 import { CommentEntity, UserEntity } from 'src/database/entities';
 import { CommentRepository } from 'src/database/repositories';
-import { CreateCommentService } from './services';
-import { CreateCommentUseCase } from './usecases';
+import { CreateCommentService, LoadCommentsService } from './services';
+import { CreateCommentUseCase, LoadCommentsUseCase } from './usecases';
 import { TaskModule } from '../tasks/task.module';
 
 @Module({
@@ -16,6 +16,12 @@ import { TaskModule } from '../tasks/task.module';
     TaskModule,
   ],
   controllers: [CommentController],
-  providers: [CreateCommentUseCase, CreateCommentService, CommentRepository],
+  providers: [
+    LoadCommentsUseCase,
+    CreateCommentUseCase,
+    LoadCommentsService,
+    CreateCommentService,
+    CommentRepository,
+  ],
 })
 export class CommentModule {}
