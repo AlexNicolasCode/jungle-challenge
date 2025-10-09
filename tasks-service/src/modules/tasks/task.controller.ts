@@ -13,7 +13,6 @@ export class TaskController {
 
   @Get()
   loadTasks(@Query() dto: LoadTasksInputDto): Promise<LoadTasksOutputDto> {
-    console.log(dto);
     return this.loadTasksUseCase.execute(dto);
   }
 
