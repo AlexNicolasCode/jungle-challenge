@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseUUIDPipe,
   Post,
@@ -55,6 +57,7 @@ export class TaskController {
   }
 
   @Put(':taskId')
+  @HttpCode(HttpStatus.NO_CONTENT)
   updateTaskById(
     @Param('taskId', new ParseUUIDPipe()) taskId: string,
     @Body() dto: UpdateTaskByIdInputDto,
@@ -63,6 +66,7 @@ export class TaskController {
   }
 
   @Delete(':taskId')
+  @HttpCode(HttpStatus.NO_CONTENT)
   deleteTaskById(
     @Param() params: DeleteTaskByIdInputDto,
   ): Promise<DeleteTaskByIdOutputDto> {
