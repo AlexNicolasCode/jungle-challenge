@@ -7,49 +7,50 @@ import { GenerateTokenInputDto } from './generate-token.input.dto';
 
 @Injectable()
 export class GenerateTokenService {
+  private readonly secret: string;
+  private readonly refreshSecret: string;
+  private readonly expiresIn: string;
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-  ) {}
-
-  generateAccessToken(input: GenerateTokenInputDto): GenerateTokenOutputDto {
-    const expiresIn = this.configService.get<string>(
-      'JWT_ACCESS_EXPIRES_IN',
-      '10m',
-    );
-    const secret = this.configService.get<string>(
+  ) {
+    this.secret = this.configService.get<string>(
       'JWT_ACCESS_SECRET',
       'fallback-secret',
     );
+    this.refreshSecret = this.configService.get<string>(
+      'JWT_REFRESH_SECRET',
+      'fallback-secret',
+    );
+    this.expiresIn = this.configService.get<string>(
+      'JWT_ACCESS_EXPIRES_IN',
+      '10m',
+    );
+  }
+
+  generateAccessToken(input: GenerateTokenInputDto): GenerateTokenOutputDto {
     const accessToken = this.jwtService.sign(input, {
-      secret,
-      expiresIn,
+      secret: this.secret,
+      expiresIn: this.expiresIn,
     });
-    const expireAt = this.calculateExpireAt(expiresIn);
+    const expireAt = this.calculateExpireAt(this.expiresIn);
     return {
       token: accessToken,
-      expiresIn,
+      expiresIn: this.expiresIn,
       expireAt,
     };
   }
 
   generateRefreshToken(input: GenerateTokenInputDto): GenerateTokenOutputDto {
-    const expiresIn = this.configService.get<string>(
-      'JWT_ACCESS_EXPIRES_IN',
-      '10m',
-    );
-    const secret = this.configService.get<string>(
-      'JWT_ACCESS_SECRET',
-      'fallback-secret',
-    );
     const refreshToken = this.jwtService.sign(input, {
-      secret,
-      expiresIn,
+      secret: this.refreshSecret,
+      expiresIn: this.expiresIn,
     });
-    const expireAt = this.calculateExpireAt(expiresIn);
+    const expireAt = this.calculateExpireAt(this.expiresIn);
     return {
       token: refreshToken,
-      expiresIn,
+      expiresIn: this.expiresIn,
       expireAt,
     };
   }
