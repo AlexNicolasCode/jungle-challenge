@@ -8,6 +8,7 @@ import {
   CheckUserExistsByEmailService,
   CompareHashsService,
   CreateUserService,
+  DecodeTokenService,
   GenerateAuthTokensService,
   GenerateTokenService,
   HashService,
@@ -16,7 +17,11 @@ import {
 } from './services';
 import { PasswordRepository, UserRepository } from 'src/database/repositories';
 import { PasswordEntity, UserEntity } from 'src/database/entities';
-import { CreateUserUseCase, LoginUseCase } from './usecases';
+import {
+  CreateUserUseCase,
+  LoginUseCase,
+  RefreshTokenUseCase,
+} from './usecases';
 
 @Module({
   imports: [
@@ -27,7 +32,9 @@ import { CreateUserUseCase, LoginUseCase } from './usecases';
   providers: [
     LoginUseCase,
     CreateUserUseCase,
+    RefreshTokenUseCase,
     CreateUserService,
+    DecodeTokenService,
     CheckUserExistsByEmailService,
     LoadUserByEmailService,
     LoadPasswordByUserIdService,
