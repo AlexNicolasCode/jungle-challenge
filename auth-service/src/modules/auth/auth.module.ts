@@ -6,14 +6,17 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthController } from './auth.controller';
 import {
   CheckUserExistsByEmailService,
+  CompareHashsService,
   CreateUserService,
   GenerateAuthTokensService,
   GenerateTokenService,
   HashService,
+  LoadPasswordByUserIdService,
+  LoadUserByEmailService,
 } from './services';
-import { UserRepository } from 'src/database/repositories';
+import { PasswordRepository, UserRepository } from 'src/database/repositories';
 import { PasswordEntity, UserEntity } from 'src/database/entities';
-import { CreateUserUseCase } from './usecases';
+import { CreateUserUseCase, LoginUseCase } from './usecases';
 
 @Module({
   imports: [
@@ -22,14 +25,19 @@ import { CreateUserUseCase } from './usecases';
   ],
   controllers: [AuthController],
   providers: [
+    LoginUseCase,
     CreateUserUseCase,
     CreateUserService,
     CheckUserExistsByEmailService,
+    LoadUserByEmailService,
+    LoadPasswordByUserIdService,
     GenerateAuthTokensService,
     GenerateTokenService,
+    CompareHashsService,
     JwtService,
     HashService,
     UserRepository,
+    PasswordRepository,
   ],
 })
 export class AuthModule {}
