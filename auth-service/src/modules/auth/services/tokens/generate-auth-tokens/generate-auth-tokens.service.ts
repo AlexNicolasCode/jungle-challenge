@@ -4,9 +4,9 @@ import {
   Logger,
 } from '@nestjs/common';
 
-import { GenerateTokenService } from '../tokens';
-import { CreateAuthTokensOutputDto } from '../../dtos/outputs';
-import { CreateAuthTokensInputDto } from '../../dtos/inputs';
+import { GenerateTokenService } from '..';
+import { GenerateAuthTokensOutputDto } from './generate-auth-tokens.output.dto';
+import { GenerateAuthTokensInputDto } from './generate-auth-tokens.input.dto';
 
 @Injectable()
 export class GenerateAuthTokensService {
@@ -17,17 +17,21 @@ export class GenerateAuthTokensService {
   generateAuthTokens({
     name,
     email,
-  }: CreateAuthTokensInputDto): CreateAuthTokensOutputDto {
+  }: GenerateAuthTokensInputDto): GenerateAuthTokensOutputDto {
     try {
-      const { accessToken } = this.generateTokenService.generateAccessToken({
-        name,
-        email,
-      });
-      const { refreshToken, expireAt, expiresIn } =
-        this.generateTokenService.generateRefreshToken({
+      const { token: accessToken } =
+        this.generateTokenService.generateAccessToken({
           name,
           email,
         });
+      const {
+        token: refreshToken,
+        expireAt,
+        expiresIn,
+      } = this.generateTokenService.generateRefreshToken({
+        name,
+        email,
+      });
       return {
         accessToken,
         refreshToken,

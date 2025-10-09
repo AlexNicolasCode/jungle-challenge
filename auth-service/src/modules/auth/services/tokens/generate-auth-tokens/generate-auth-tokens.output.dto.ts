@@ -1,4 +1,4 @@
-export class CreateAuthTokensOutputDto {
+export class GenerateAuthTokensOutputDto {
   accessToken: string;
   refreshToken: string;
   expiresIn: string;

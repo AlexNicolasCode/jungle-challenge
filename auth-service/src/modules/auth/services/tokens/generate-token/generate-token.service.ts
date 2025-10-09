@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
+import { GenerateTokenOutputDto } from './generate-token.output.dto';
+import { GenerateTokenInputDto } from './generate-token.input.dto';
+
 @Injectable()
 export class GenerateTokenService {
   constructor(
@@ -9,11 +12,7 @@ export class GenerateTokenService {
     private readonly configService: ConfigService,
   ) {}
 
-  generateAccessToken(payload: Record<string, string | number>): {
-    accessToken: string;
-    expiresIn: string;
-    expireAt: Date;
-  } {
+  generateAccessToken(input: GenerateTokenInputDto): GenerateTokenOutputDto {
     const expiresIn = this.configService.get<string>(
       'JWT_ACCESS_EXPIRES_IN',
       '10m',
@@ -22,23 +21,19 @@ export class GenerateTokenService {
       'JWT_ACCESS_SECRET',
       'fallback-secret',
     );
-    const accessToken = this.jwtService.sign(payload, {
+    const accessToken = this.jwtService.sign(input, {
       secret,
       expiresIn,
     });
     const expireAt = this.calculateExpireAt(expiresIn);
     return {
-      accessToken,
+      token: accessToken,
       expiresIn,
       expireAt,
     };
   }
 
-  generateRefreshToken(payload: Record<string, string | number>): {
-    refreshToken: string;
-    expiresIn: string;
-    expireAt: Date;
-  } {
+  generateRefreshToken(input: GenerateTokenInputDto): GenerateTokenOutputDto {
     const expiresIn = this.configService.get<string>(
       'JWT_ACCESS_EXPIRES_IN',
       '10m',
@@ -47,13 +42,13 @@ export class GenerateTokenService {
       'JWT_ACCESS_SECRET',
       'fallback-secret',
     );
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshToken = this.jwtService.sign(input, {
       secret,
       expiresIn,
     });
     const expireAt = this.calculateExpireAt(expiresIn);
     return {
-      refreshToken,
+      token: refreshToken,
       expiresIn,
       expireAt,
     };
