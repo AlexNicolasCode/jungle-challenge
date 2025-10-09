@@ -1,0 +1,52 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+
+import { PasswordEntity, UserEntity } from '../entities';
+import { v4 } from 'uuid';
+
+@Injectable()
+export class UserRepository {
+  constructor(
+    private readonly dataSource: DataSource,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(PasswordEntity)
+    private readonly passwordRepository: Repository<PasswordEntity>,
+  ) {}
+
+  checkIfExistsByEmail(email: string): Promise<boolean> {
+    return this.userRepository.exists({ where: { email } });
+  }
+
+  loadByEmail(email: string): Promise<UserEntity | null> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
+  async save({
+    name,
+    email,
+    password,
+  }: {
+    name: string;
+    email: string;
+    password: string;
+  }): Promise<{ id: string }> {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.save(this.userRepository.target, {
+        id: v4(),
+        name,
+        email,
+      });
+      await manager.save(this.passwordRepository.target, {
+        hash: password,
+        user: user,
+      });
+      return { id: user.id };
+    });
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.userRepository.softDelete(id);
+  }
+}
