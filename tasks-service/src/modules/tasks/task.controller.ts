@@ -74,6 +74,7 @@ export class TaskController {
   }
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   createTask(@Body() dto: CreateTaskInputDto): Promise<CreateTaskOutputDto> {
     return this.createTaskUseCase.execute(dto);
   }

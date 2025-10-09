@@ -1,4 +1,12 @@
-import { Body, Controller, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from '@nestjs/common';
 
 import { CreateCommentInputDto } from './dtos/inputs';
 import { CreateCommentOutputDto } from './dtos/outputs';
@@ -9,6 +17,7 @@ export class CommentController {
   constructor(private readonly createCommentUseCase: CreateCommentUseCase) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   createComment(
     @Param('taskId', new ParseUUIDPipe()) taskId: string,
     @Body() dto: CreateCommentInputDto,
