@@ -88,7 +88,7 @@ export class TaskRepository {
     await this.taskRepository.update({ id: taskId }, task);
   }
 
-  async delete(taskId: string): Promise<void> {
+  async deleteById(taskId: string): Promise<void> {
     await this.taskRepository.softDelete(taskId);
   }
 

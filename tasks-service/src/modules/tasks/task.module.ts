@@ -6,12 +6,14 @@ import { TaskController } from './task.controller';
 import { TaskEntity, UserEntity } from 'src/database/entities';
 import {
   CreateTaskUseCase,
+  DeleteTaskByIdUseCase,
   LoadTaskByIdUseCase,
   LoadTasksUseCase,
   UpdateTaskByIdUseCase,
 } from './usecases';
 import {
   CreateTaskService,
+  DeleteTaskByIdService,
   LoadTaskByIdService,
   LoadTasksService,
   UpdateTaskByIdService,
@@ -25,10 +27,12 @@ import { TaskRepository } from 'src/database/repositories';
   ],
   controllers: [TaskController],
   providers: [
+    DeleteTaskByIdUseCase,
     UpdateTaskByIdUseCase,
     LoadTaskByIdUseCase,
     CreateTaskUseCase,
     LoadTasksUseCase,
+    DeleteTaskByIdService,
     UpdateTaskByIdService,
     LoadTasksService,
     LoadTaskByIdService,

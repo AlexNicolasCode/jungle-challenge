@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -11,18 +12,21 @@ import {
 
 import {
   CreateTaskInputDto,
+  DeleteTaskByIdInputDto,
   LoadTaskByIdInputDto,
   LoadTasksInputDto,
   UpdateTaskByIdInputDto,
 } from './dtos/inputs';
 import {
   CreateTaskOutputDto,
+  DeleteTaskByIdOutputDto,
   LoadTaskByIdOutputDto,
   LoadTasksOutputDto,
   UpdateTaskByIdOutputDto,
 } from './dtos/outputs';
 import {
   CreateTaskUseCase,
+  DeleteTaskByIdUseCase,
   LoadTaskByIdUseCase,
   LoadTasksUseCase,
   UpdateTaskByIdUseCase,
@@ -35,6 +39,7 @@ export class TaskController {
     private readonly createTaskUseCase: CreateTaskUseCase,
     private readonly loadTaskByIdUseCase: LoadTaskByIdUseCase,
     private readonly updateTaskByIdUseCase: UpdateTaskByIdUseCase,
+    private readonly deleteTaskByIdUseCase: DeleteTaskByIdUseCase,
   ) {}
 
   @Get()
@@ -55,6 +60,13 @@ export class TaskController {
     @Body() dto: UpdateTaskByIdInputDto,
   ): Promise<UpdateTaskByIdOutputDto> {
     return this.updateTaskByIdUseCase.execute(taskId, dto);
+  }
+
+  @Delete(':taskId')
+  deleteTaskById(
+    @Param() params: DeleteTaskByIdInputDto,
+  ): Promise<DeleteTaskByIdOutputDto> {
+    return this.deleteTaskByIdUseCase.execute(params);
   }
 
   @Post()
