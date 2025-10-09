@@ -6,7 +6,7 @@ export const dbConfig = TypeOrmModule.forRoot({
   port: 5432,
   username: 'postgres',
   password: 'password',
-  database: 'challenge_db',
+  database: 'auth_db',
   entities: ['dist/database/entities/*.entity.js'],
   migrations: ['dist/database/migrations/*.js'],
   migrationsRun: true,
