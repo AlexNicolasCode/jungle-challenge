@@ -4,8 +4,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TaskController } from './task.controller';
 import { TaskEntity, UserEntity } from 'src/database/entities';
-import { CreateTaskUseCase, LoadTasksUseCase } from './usecases';
-import { CreateTaskService, LoadTasksService } from './services';
+import {
+  CreateTaskUseCase,
+  LoadTaskByIdUseCase,
+  LoadTasksUseCase,
+} from './usecases';
+import {
+  CreateTaskService,
+  LoadTaskByIdService,
+  LoadTasksService,
+} from './services';
 import { TaskRepository } from 'src/database/repositories';
 
 @Module({
@@ -15,9 +23,11 @@ import { TaskRepository } from 'src/database/repositories';
   ],
   controllers: [TaskController],
   providers: [
+    LoadTaskByIdUseCase,
     CreateTaskUseCase,
     LoadTasksUseCase,
     LoadTasksService,
+    LoadTaskByIdService,
     CreateTaskService,
     TaskRepository,
   ],

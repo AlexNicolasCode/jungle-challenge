@@ -51,7 +51,28 @@ export class TaskRepository {
     });
   }
 
-  async loadById(taskId: string): Promise<void> {
+  async loadById(taskId: string): Promise<TaskEntity | null> {
+    return this.taskRepository.findOne({
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        priority: true,
+        createdAt: true,
+        updatedAt: true,
+        deadline: true,
+        description: true,
+        users: {
+          id: true,
+          name: true,
+        },
+      },
+      relations: ['users'],
+      where: { id: taskId },
+    });
+  }
+
+  async delete(taskId: string): Promise<void> {
     await this.taskRepository.softDelete(taskId);
   }
 
