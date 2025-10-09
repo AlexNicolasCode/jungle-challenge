@@ -103,7 +103,6 @@ export class TaskRepository {
       },
     };
     const fields: string[] = Object.keys(where);
-    console.log('fields', fields);
     for (const field of fields) {
       const whereParams = fieldMapper[field];
       if (
@@ -117,7 +116,6 @@ export class TaskRepository {
       query.andWhere(whereParams.query, whereParams.variables);
     }
     const [tasks, count] = await query.getManyAndCount();
-    console.log('count', count);
     return { tasks, count };
   }
 }
