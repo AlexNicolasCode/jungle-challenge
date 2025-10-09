@@ -4,9 +4,9 @@ import {
   Logger,
 } from '@nestjs/common';
 
-import { CreateTaskInputDto } from '../../dtos/inputs';
-import { CreateTaskOutputDto } from '../../dtos/outputs';
 import { TaskRepository } from 'src/database/repositories';
+import { CreateTaskInputDto } from './create-task.input.dto';
+import { CreateTaskOutputDto } from './create-task.output.dto';
 
 @Injectable()
 export class CreateTaskService {
