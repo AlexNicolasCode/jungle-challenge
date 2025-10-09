@@ -8,11 +8,13 @@ import {
   CreateTaskUseCase,
   LoadTaskByIdUseCase,
   LoadTasksUseCase,
+  UpdateTaskByIdUseCase,
 } from './usecases';
 import {
   CreateTaskService,
   LoadTaskByIdService,
   LoadTasksService,
+  UpdateTaskByIdService,
 } from './services';
 import { TaskRepository } from 'src/database/repositories';
 
@@ -23,9 +25,11 @@ import { TaskRepository } from 'src/database/repositories';
   ],
   controllers: [TaskController],
   providers: [
+    UpdateTaskByIdUseCase,
     LoadTaskByIdUseCase,
     CreateTaskUseCase,
     LoadTasksUseCase,
+    UpdateTaskByIdService,
     LoadTasksService,
     LoadTaskByIdService,
     CreateTaskService,

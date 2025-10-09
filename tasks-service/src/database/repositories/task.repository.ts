@@ -72,6 +72,22 @@ export class TaskRepository {
     });
   }
 
+  async updateById({
+    taskId,
+    task,
+  }: {
+    taskId: string;
+    task: {
+      title: string;
+      description?: string;
+      deadline: Date;
+      priority: TaskPriorityEnum;
+      status: TaskStatusEnum;
+    };
+  }): Promise<void> {
+    await this.taskRepository.update({ id: taskId }, task);
+  }
+
   async delete(taskId: string): Promise<void> {
     await this.taskRepository.softDelete(taskId);
   }
