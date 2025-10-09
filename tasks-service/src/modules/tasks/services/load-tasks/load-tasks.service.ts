@@ -49,6 +49,7 @@ export class LoadTasksService {
     }[];
   }> {
     return tasks.map((task) => ({
+      id: task.id,
       title: task.title,
       deadline: task.deadline,
       priority: task.priority,
