@@ -13,8 +13,8 @@ export class LoadTasksUseCase {
     return {
       list: tasks,
       page: dto.page,
-      take: dto.take,
-      totalPages: Math.ceil(count / dto.take),
+      size: dto.size,
+      totalPages: Math.ceil(count / dto.size),
     };
   }
 }

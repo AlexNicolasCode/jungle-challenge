@@ -57,11 +57,11 @@ export class TaskRepository {
 
   async loadAll({
     page,
-    take,
+    size,
     where,
   }: {
     page: number;
-    take: number;
+    size: number;
     where: {
       title?: string;
       deadline?: Date;
@@ -73,9 +73,9 @@ export class TaskRepository {
     const query = this.taskRepository
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.users', 'user');
-    const skip = (page - 1) * take;
+    const skip = (page - 1) * size;
     query.skip(skip);
-    query.take(take);
+    query.take(size);
     const users = where.usersIds;
     const hasUsers = users && users.length > 0;
     if (hasUsers) {

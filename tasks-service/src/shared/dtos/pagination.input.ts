@@ -4,7 +4,7 @@ import { IsNumber } from 'class-validator';
 export class PaginationInput {
   @IsNumber()
   @Transform(({ value }) => Number(value), { toClassOnly: true })
-  take: number;
+  size: number;
 
   @IsNumber()
   @Transform(({ value }) => Number(value), { toClassOnly: true })

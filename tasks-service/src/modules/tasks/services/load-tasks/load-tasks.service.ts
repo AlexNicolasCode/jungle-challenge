@@ -20,7 +20,7 @@ export class LoadTasksService {
     try {
       const { count, tasks } = await this.taskRepository.loadAll({
         page: dto.page,
-        take: dto.take,
+        size: dto.size,
         where: {
           title: dto.title,
           deadline: dto.deadline,

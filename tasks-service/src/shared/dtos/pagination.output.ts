@@ -1,6 +1,6 @@
 export type PaginationOutput<T> = {
   list: T[];
-  take: number;
+  size: number;
   page: number;
   totalPages: number;
 };
