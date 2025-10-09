@@ -1,12 +1,21 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 
-import { CreateTaskInputDto } from './dtos/inputs';
-import { CreateTaskOutputDto } from './dtos/outputs';
-import { CreateTaskUseCase } from './usecases';
+import { CreateTaskInputDto, LoadTasksInputDto } from './dtos/inputs';
+import { CreateTaskOutputDto, LoadTasksOutputDto } from './dtos/outputs';
+import { CreateTaskUseCase, LoadTasksUseCase } from './usecases';
 
 @Controller('api/tasks')
 export class TaskController {
-  constructor(private readonly createTaskUseCase: CreateTaskUseCase) {}
+  constructor(
+    private readonly loadTasksUseCase: LoadTasksUseCase,
+    private readonly createTaskUseCase: CreateTaskUseCase,
+  ) {}
+
+  @Get()
+  loadTasks(@Query() dto: LoadTasksInputDto): Promise<LoadTasksOutputDto> {
+    console.log(dto);
+    return this.loadTasksUseCase.execute(dto);
+  }
 
   @Post()
   createTask(@Body() dto: CreateTaskInputDto): Promise<CreateTaskOutputDto> {

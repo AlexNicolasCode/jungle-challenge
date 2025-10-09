@@ -55,7 +55,69 @@ export class TaskRepository {
     await this.taskRepository.softDelete(taskId);
   }
 
-  async loadAll(): Promise<TaskEntity[]> {
-    return this.taskRepository.find({ relations: ['users'] });
+  async loadAll({
+    page,
+    take,
+    where,
+  }: {
+    page: number;
+    take: number;
+    where: {
+      title?: string;
+      deadline?: Date;
+      priority?: TaskPriorityEnum;
+      status?: TaskStatusEnum;
+      usersIds?: string[];
+    };
+  }): Promise<{ tasks: TaskEntity[]; count: number }> {
+    const query = this.taskRepository
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.users', 'user');
+    const skip = (page - 1) * take;
+    query.skip(skip);
+    query.take(take);
+    const users = where.usersIds;
+    const hasUsers = users && users.length > 0;
+    if (hasUsers) {
+      query.andWhere('user.id IN (:...usersIds)', { usersIds: where.usersIds });
+    }
+    const fieldMapper: Record<
+      string,
+      { query: string; variables: Record<string, any> }
+    > = {
+      title: {
+        query: 'task.title ILIKE :title',
+        variables: { title: `%${where.title}%` },
+      },
+      deadline: {
+        query: 'task.deadline = :deadline',
+        variables: { deadline: where.deadline },
+      },
+      priority: {
+        query: 'task.priority = :priority',
+        variables: { priority: where.priority },
+      },
+      status: {
+        query: 'task.status = :status',
+        variables: { status: where.status },
+      },
+    };
+    const fields: string[] = Object.keys(where);
+    console.log('fields', fields);
+    for (const field of fields) {
+      const whereParams = fieldMapper[field];
+      if (
+        !where[field] ||
+        !whereParams ||
+        !whereParams.query ||
+        !whereParams.variables
+      ) {
+        continue;
+      }
+      query.andWhere(whereParams.query, whereParams.variables);
+    }
+    const [tasks, count] = await query.getManyAndCount();
+    console.log('count', count);
+    return { tasks, count };
   }
 }
