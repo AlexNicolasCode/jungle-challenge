@@ -120,7 +120,13 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.post<TaskEntity>('', task);
+      const response = await taskApiClient.post<TaskEntity>('', {
+        title: task.title,
+        deadline: task.deadline,
+        priority: task.priority,
+        status: task.status,
+        users: [],
+      });
       const taskId: string = response.data.id;
       setTasks((prev) => [...prev, { id: taskId, ...task }]);
       setError(undefined);
@@ -131,7 +137,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
-  const updateTask = async (taskId: string, data: {
+  const updateTask = async (taskId: string, task: {
       title: string;
       description?: string;
       deadline: string;
@@ -146,7 +152,12 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
     setLoading(true);
     try {
-       await taskApiClient.put<void>(`${taskId}`, data);
+       await taskApiClient.put<void>(`${taskId}`, {
+        title: task.title,
+        deadline: task.deadline,
+        priority: task.priority,
+        status: task.status,
+      });
       setTasks((prev) =>
         prev.map((task) => ({
           ...task,

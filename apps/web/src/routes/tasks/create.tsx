@@ -1,43 +1,57 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState, useRef } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { TaskEntity } from '../../shared/types';
 
 export const Route = createFileRoute('/tasks/create')({
   component: CreateTaskPage,
 });
 
+const createTaskSchema = z.object({
+  title: z.string().min(3, 'Title is required'),
+  priority: z.enum(TaskPriorityEnum),
+  status: z.enum(TaskStatusEnum),
+  deadline: z.string().optional(),
+});
+
+type CreateTaskForm = z.infer<typeof createTaskSchema>;
+
 function CreateTaskPage() {
   const { createTask } = useTasks();
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState('');
-  const [priority, setPriority] = useState<TaskPriorityEnum>(TaskPriorityEnum.LOW);
-  const [status, setStatus] = useState<TaskStatusEnum>(TaskStatusEnum.TODO);
-  const [deadline, setDeadline] = useState('');
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateTaskForm>({
+    resolver: zodResolver(createTaskSchema),
+    defaultValues: {
+      title: '',
+      priority: TaskPriorityEnum.LOW,
+      status: TaskStatusEnum.TODO,
+      deadline: '',
+    },
+  });
 
-  const titleInputRef = useRef<HTMLInputElement>(null);
-
-  const handleCreate = async () => {
-    if (!title.trim()) return alert('Title is required');
+  const onSubmit = async (data: CreateTaskForm) => {
     try {
-      setLoading(true);
       const newTask = {
-        title,
-        priority,
-        status,
-        deadline: deadline ? new Date(deadline).toISOString() : new Date().toISOString(),
+        title: data.title,
+        priority: data.priority,
+        status: data.status,
+        deadline: data.deadline
+          ? new Date(data.deadline).toISOString()
+          : new Date().toISOString(),
         users: [],
       };
       await createTask(newTask);
       navigate({ to: '/' });
     } catch (err: any) {
       alert(err.message || 'Failed to create task');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -53,23 +67,23 @@ function CreateTaskPage() {
       <div className="bg-white rounded-2xl shadow p-6 max-w-2xl mx-auto">
         <h1 className="text-2xl font-semibold text-gray-900 mb-4">Create New Task</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="font-medium text-gray-700">Title</label>
             <input
-              ref={titleInputRef}
+              {...register('title')}
               type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
+              className={`mt-1 border rounded px-3 py-2 w-full ${
+                errors.title ? 'border-red-500' : 'border-gray-300'
+              }`}
             />
+            {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
           </div>
 
           <div>
             <label className="font-medium text-gray-700">Priority</label>
             <select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as TaskPriorityEnum)}
+              {...register('priority')}
               className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
             >
               {Object.values(TaskPriorityEnum).map((p) => (
@@ -83,8 +97,7 @@ function CreateTaskPage() {
           <div>
             <label className="font-medium text-gray-700">Status</label>
             <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as TaskStatusEnum)}
+              {...register('status')}
               className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
             >
               {Object.values(TaskStatusEnum).map((s) => (
@@ -98,21 +111,20 @@ function CreateTaskPage() {
           <div className="col-span-2">
             <label className="font-medium text-gray-700">Deadline</label>
             <input
+              {...register('deadline')}
               type="datetime-local"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
               className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
             />
           </div>
-        </div>
 
-        <button
-          onClick={handleCreate}
-          disabled={loading}
-          className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl"
-        >
-          {loading ? 'Creating...' : 'Create Task'}
-        </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="mt-6 col-span-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl"
+          >
+            {isSubmitting ? 'Creating...' : 'Create Task'}
+          </button>
+        </form>
       </div>
     </div>
   );
