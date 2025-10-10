@@ -23,9 +23,7 @@ function TaskDetailsPage() {
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (loading || !task || isEditMode) {
-      return;
-    }
+    if (loading || !task || isEditMode) return;
     updateTask(task.id, {
       title: task.title,
       deadline: task.deadline,
@@ -109,6 +107,20 @@ function TaskDetailsPage() {
     }
   };
 
+  const getPriorityColor = (priority: TaskPriorityEnum) => {
+    switch (priority) {
+      case TaskPriorityEnum.URGENT:
+        return 'bg-red-100 text-red-800';
+      case TaskPriorityEnum.HIGH:
+        return 'bg-orange-100 text-orange-800';
+      case TaskPriorityEnum.MEDIUM:
+        return 'bg-yellow-100 text-yellow-800';
+      case TaskPriorityEnum.LOW:
+      default:
+        return 'bg-gray-100 text-gray-700';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <button
@@ -122,15 +134,12 @@ function TaskDetailsPage() {
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-3">
             {isEditMode ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  defaultValue={task.title}
-                  ref={titleInputRef}
-                  className="border border-gray-300 rounded px-2 py-1 text-lg font-medium"
-                  disabled={!isEditMode}
-                />
-              </div>
+              <input
+                type="text"
+                defaultValue={task.title}
+                ref={titleInputRef}
+                className="border border-gray-300 rounded px-2 py-1 text-lg font-medium"
+              />
             ) : (
               <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
             )}
@@ -138,50 +147,97 @@ function TaskDetailsPage() {
 
           <div className="flex items-center gap-3">
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(task.status)}`}
+              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                isEditMode ? '' : getStatusColor(task.status)
+              }`}
             >
-              {task.status.replace('_', ' ')}
+              {isEditMode ? (
+                <select
+                  value={task.status}
+                  onChange={(e) => handleStatusChange(e.target.value as TaskStatusEnum)}
+                  disabled={updating}
+                  className="border border-gray-300 rounded px-2 py-1"
+                >
+                  {Object.values(TaskStatusEnum).map((status) => (
+                    <option key={status} value={status}>
+                      {status.replace('_', ' ')}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                task.status.replace('_', ' ')
+              )}
             </span>
-            <button
-              onClick={() => setIsEditMode((prev) => !prev)}
-              className="text-gray-500 hover:text-gray-700 text-sm font-medium"
-            >
-              {isEditMode ? 'Save' : 'Edit'}
-            </button>
+
+            {isEditMode ? (
+              <button
+                onClick={() => setIsEditMode(false)}
+                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditMode(true)}
+                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+              >
+                Edit
+              </button>
+            )}
           </div>
         </div>
 
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
           <div>
             <p className="font-medium">Priority</p>
-            <select
-              value={task.priority}
-              onChange={(e) => handlePriorityChange(e.target.value as TaskPriorityEnum)}
-              disabled={!isEditMode || updating}
-              className="mt-1 border border-gray-300 rounded px-3 py-2 w-full bg-white"
-            >
-              {Object.values(TaskPriorityEnum).map((priority) => (
-                <option key={priority} value={priority}>
-                  {priority}
-                </option>
-              ))}
-            </select>
+            {isEditMode ? (
+              <select
+                value={task.priority}
+                onChange={(e) => handlePriorityChange(e.target.value as TaskPriorityEnum)}
+                disabled={updating}
+                className="mt-1 border border-gray-300 rounded px-3 py-2 w-full bg-white"
+              >
+                {Object.values(TaskPriorityEnum).map((priority) => (
+                  <option key={priority} value={priority}>
+                    {priority}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span
+                className={`mt-1 inline-block px-3 py-1 rounded-full text-sm font-medium ${getPriorityColor(
+                  task.priority
+                )}`}
+              >
+                {task.priority}
+              </span>
+            )}
           </div>
 
           <div>
             <p className="font-medium">Status</p>
-            <select
-              value={task.status}
-              onChange={(e) => handleStatusChange(e.target.value as TaskStatusEnum)}
-              disabled={!isEditMode || updating}
-              className="mt-1 border border-gray-300 rounded px-3 py-2 w-full bg-white"
-            >
-              {Object.values(TaskStatusEnum).map((status) => (
-                <option key={status} value={status}>
-                  {status.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
+            {isEditMode ? (
+              <select
+                value={task.status}
+                onChange={(e) => handleStatusChange(e.target.value as TaskStatusEnum)}
+                disabled={updating}
+                className="mt-1 border border-gray-300 rounded px-3 py-2 w-full bg-white"
+              >
+                {Object.values(TaskStatusEnum).map((status) => (
+                  <option key={status} value={status}>
+                    {status.replace('_', ' ')}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <span
+                className={`mt-1 inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                  task.status
+                )}`}
+              >
+                {task.status.replace('_', ' ')}
+              </span>
+            )}
           </div>
 
           <div>
