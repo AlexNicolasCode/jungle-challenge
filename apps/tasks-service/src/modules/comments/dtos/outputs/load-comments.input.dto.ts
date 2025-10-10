@@ -1,6 +1,6 @@
 import { PaginationOutput } from 'src/shared/dtos';
 
-export type LoadCommentsOutputDto = PaginationOutput<{
+export class LoadCommentsOutputDto extends PaginationOutput<{
   authorName: string;
   content: string;
-}>;
+}> {}

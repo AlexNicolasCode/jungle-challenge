@@ -1,7 +1,7 @@
 import { PaginationOutput } from 'src/shared/dtos';
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
-export type LoadTasksOutputDto = PaginationOutput<{
+export class LoadTasksOutputDto extends PaginationOutput<{
   title: string;
   deadline: Date;
   priority: TaskPriorityEnum;
@@ -12,4 +12,4 @@ export type LoadTasksOutputDto = PaginationOutput<{
     id: string;
     name: string;
   }[];
-}>;
+}> {}
