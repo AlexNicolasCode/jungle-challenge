@@ -2,9 +2,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute } from '@tanstack/react-router';
-
-import { useAuth } from '../../hooks';
 import { useNavigate } from '@tanstack/react-router';
+
+import { useAuth, useLoading } from '../../hooks';
 
 const registerSchema = z
   .object({
@@ -23,6 +23,7 @@ export const Route = createFileRoute('/register/')({
 })
 
 function RegisterPage() {
+  const { loading, renderLoading } = useLoading();
   const { registerUser } = useAuth();
   const navigate = useNavigate();
   const {
@@ -54,7 +55,7 @@ function RegisterPage() {
     alert(error);
   };
 
-  return (
+  const renderPage = () => (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -119,6 +120,8 @@ function RegisterPage() {
       </form>
     </div>
   );
+
+  return loading ? renderLoading('Creating user...') : renderPage();
 }
 
 export default RegisterPage;

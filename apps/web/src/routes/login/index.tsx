@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useAuth } from '../../hooks';
+import { useAuth, useLoading } from '../../hooks';
 
 const loginSchema = z.object({
   email: z.email({ message: 'Invalid email address' }),
@@ -15,6 +15,7 @@ export const Route = createFileRoute('/login/')({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { loading, renderLoading } = useLoading();
   const { login } = useAuth();
   const {
     register,
@@ -42,7 +43,7 @@ function LoginPage() {
     alert(error)
   };
 
-  return (
+  const renderPage = () => (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -80,6 +81,8 @@ function LoginPage() {
       </form>
     </div>
   );
+
+  return loading ? renderLoading('Checking credentials...') : renderPage();
 };
 
 export default LoginPage;

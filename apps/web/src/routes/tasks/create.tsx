@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useTasks } from '../../hooks';
+import { useLoading, useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
 
 export const Route = createFileRoute('/tasks/create')({
@@ -20,6 +20,7 @@ const createTaskSchema = z.object({
 type CreateTaskForm = z.infer<typeof createTaskSchema>;
 
 function CreateTaskPage() {
+  const { loading, renderLoading } = useLoading();
   const { createTask } = useTasks();
   const navigate = useNavigate();
 
@@ -55,7 +56,7 @@ function CreateTaskPage() {
     }
   };
 
-  return (
+  const renderPage = () => (
     <div className="min-h-screen bg-gray-100 p-6">
       <button
         onClick={() => navigate({ to: '/' })}
@@ -128,6 +129,8 @@ function CreateTaskPage() {
       </div>
     </div>
   );
+
+  return loading ? renderLoading('Creating task...') : renderPage(); 
 }
 
 export default CreateTaskPage;

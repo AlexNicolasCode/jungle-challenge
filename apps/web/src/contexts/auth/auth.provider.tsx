@@ -7,7 +7,7 @@ import { authApiClient } from '../../clients/auth';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<Tokens | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const isAuthenticated = useMemo(() => !!tokens, [tokens]);
 

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useTasks } from '../../hooks';
+import { useLoading, useTasks } from '../../hooks';
 import { TaskEntity } from '../../shared/types';
 import { TaskStatusEnum, TaskPriorityEnum } from '../../shared/enums';
 
@@ -22,6 +22,7 @@ type EditTaskForm = z.infer<typeof editTaskSchema>;
 
 function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id' });
+  const { loading: globalLoading, renderLoading } = useLoading();
   const { loadTaskById, updateTask } = useTasks();
   const navigate = useNavigate();
 
@@ -91,7 +92,7 @@ function TaskDetailsPage() {
     }
   };
 
-  if (loading) return <div className="p-6 text-gray-600 animate-pulse">Loading task details...</div>;
+  if (loading || globalLoading) return renderLoading('Loading task details...');
   if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
   if (!task) return <div className="p-6 text-gray-600">Task not found.</div>;
 
@@ -123,7 +124,7 @@ function TaskDetailsPage() {
     }
   };
 
-  return (
+  const renderPage = () => (
     <div className="min-h-screen bg-gray-100 p-6">
       <button
         onClick={() => navigate({ to: '/' })}
@@ -259,6 +260,8 @@ function TaskDetailsPage() {
       </div>
     </div>
   );
+
+  return loading ? renderLoading('Editing Task') : renderPage();
 }
 
 export default TaskDetailsPage;

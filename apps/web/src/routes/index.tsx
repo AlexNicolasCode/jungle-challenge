@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useCallback, useState } from 'react';
-import { useTasks } from '../hooks';
+import { useLoading, useTasks } from '../hooks';
 import { TaskStatusEnum } from '../shared/enums';
 
 export const Route = createFileRoute('/')({
@@ -9,7 +9,8 @@ export const Route = createFileRoute('/')({
 
 function HomePage() {
   const navigate = useNavigate();
-  const { tasks, loading, error, loadTasks, handleNextPage } = useTasks();
+  const { loading, renderLoading } = useLoading();
+  const { tasks, error, loadTasks, handleNextPage } = useTasks();
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 relative">
-      {loading && <p>Loading tasks...</p>}
+      {loading && renderLoading('Loading tasks...')}
       {error && <p className="text-red-500">Error: {error}</p>}
 
       {tasks.length === 0 && !loading && (
