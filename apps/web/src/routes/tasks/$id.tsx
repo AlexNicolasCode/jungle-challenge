@@ -23,6 +23,18 @@ function TaskDetailsPage() {
   const titleInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    if (loading || !task || isEditMode) {
+      return;
+    }
+    updateTask(task.id, {
+      title: task.title,
+      deadline: task.deadline,
+      priority: task.priority,
+      status: task.status,
+    });
+  }, [isEditMode]);
+
+  useEffect(() => {
     const fetchTask = async () => {
       if (loading) return;
       try {
@@ -46,12 +58,6 @@ function TaskDetailsPage() {
     if (!task) return;
     try {
       setUpdating(true);
-      await updateTask(task.id, {
-        title: task.title,
-        deadline: task.deadline,
-        priority: task.priority,
-        status: newStatus,
-      });
       setTask({ ...task, status: newStatus });
     } catch {
       alert('Failed to update status');
@@ -64,12 +70,6 @@ function TaskDetailsPage() {
     if (!task) return;
     try {
       setUpdating(true);
-      await updateTask(task.id, {
-        title: task.title,
-        deadline: task.deadline,
-        priority: newPriority,
-        status: task.status,
-      });
       setTask({ ...task, priority: newPriority });
     } catch {
       alert('Failed to update priority');
@@ -83,14 +83,7 @@ function TaskDetailsPage() {
     const newTitle = titleInputRef.current.value;
     try {
       setUpdating(true);
-      await updateTask(task.id, {
-        title: newTitle,
-        deadline: task.deadline,
-        priority: task.priority,
-        status: task.status,
-      });
       setTask({ ...task, title: newTitle });
-      setIsEditMode(false);
     } catch {
       alert('Failed to update title');
     } finally {
@@ -137,19 +130,6 @@ function TaskDetailsPage() {
                   className="border border-gray-300 rounded px-2 py-1 text-lg font-medium"
                   disabled={!isEditMode}
                 />
-                <button
-                  onClick={handleTitleUpdate}
-                  disabled={updating}
-                  className="text-green-600 hover:text-green-800 text-sm font-medium"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setIsEditMode(false)}
-                  className="text-gray-500 hover:text-gray-700 text-sm font-medium"
-                >
-                  Cancel
-                </button>
               </div>
             ) : (
               <h1 className="text-2xl font-semibold text-gray-900">{task.title}</h1>
@@ -166,7 +146,7 @@ function TaskDetailsPage() {
               onClick={() => setIsEditMode((prev) => !prev)}
               className="text-gray-500 hover:text-gray-700 text-sm font-medium"
             >
-              {isEditMode ? 'Disable Edit' : 'Enable Edit'}
+              {isEditMode ? 'Save' : 'Edit'}
             </button>
           </div>
         </div>
