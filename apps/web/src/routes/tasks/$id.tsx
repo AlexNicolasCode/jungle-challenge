@@ -47,7 +47,9 @@ function TaskDetailsPage() {
     try {
       setUpdating(true);
       await updateTask(task.id, {
-        ...task,
+        title: task.title,
+        deadline: task.deadline,
+        priority: task.priority,
         status: newStatus,
       });
       setTask({ ...task, status: newStatus });
@@ -63,8 +65,10 @@ function TaskDetailsPage() {
     try {
       setUpdating(true);
       await updateTask(task.id, {
-        ...task,
+        title: task.title,
+        deadline: task.deadline,
         priority: newPriority,
+        status: task.status,
       });
       setTask({ ...task, priority: newPriority });
     } catch {
@@ -80,8 +84,10 @@ function TaskDetailsPage() {
     try {
       setUpdating(true);
       await updateTask(task.id, {
-        ...task,
         title: newTitle,
+        deadline: task.deadline,
+        priority: task.priority,
+        status: task.status,
       });
       setTask({ ...task, title: newTitle });
       setIsEditMode(false);
