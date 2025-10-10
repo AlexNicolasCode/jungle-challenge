@@ -3,12 +3,15 @@ import { MessagePattern } from '@nestjs/microservices';
 
 import {
   CreateUserUseCase,
+  GetUserByTokenUseCase,
   LoginUseCase,
   RefreshTokenUseCase,
 } from './usecases';
 import {
   CreateUserInputDto,
   CreateUserOutputDto,
+  GetUserByTokenInputDto,
+  GetUserByTokenOutputDto,
   LoginInputDto,
   LoginOutputDto,
   RefreshTokenInputDto,
@@ -21,6 +24,7 @@ export class AuthController {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly getUserByTokenUseCase: GetUserByTokenUseCase,
   ) {}
 
   @MessagePattern('auth.register')
@@ -36,5 +40,10 @@ export class AuthController {
   @MessagePattern('auth.refresh')
   refreshToken(dto: RefreshTokenInputDto): Promise<RefreshTokenOutputDto> {
     return this.refreshTokenUseCase.execute(dto);
+  }
+
+  @MessagePattern('auth.user')
+  token(dto: GetUserByTokenInputDto): Promise<GetUserByTokenOutputDto> {
+    return this.getUserByTokenUseCase.execute(dto);
   }
 }

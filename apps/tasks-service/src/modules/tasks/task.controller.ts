@@ -1,16 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 
 import {
   CreateTaskInputDto,
@@ -34,7 +23,7 @@ import {
   UpdateTaskByIdUseCase,
 } from './usecases';
 
-@Controller('api/tasks')
+@Controller()
 export class TaskController {
   constructor(
     private readonly loadTasksUseCase: LoadTasksUseCase,
@@ -44,38 +33,32 @@ export class TaskController {
     private readonly deleteTaskByIdUseCase: DeleteTaskByIdUseCase,
   ) {}
 
-  @Get()
-  loadTasks(@Query() dto: LoadTasksInputDto): Promise<LoadTasksOutputDto> {
+  @MessagePattern('task.load')
+  loadTasks(dto: LoadTasksInputDto): Promise<LoadTasksOutputDto> {
     return this.loadTasksUseCase.execute(dto);
   }
 
-  @Get(':taskId')
-  loadTaskById(
-    @Param() params: LoadTaskByIdInputDto,
-  ): Promise<LoadTaskByIdOutputDto> {
+  @MessagePattern('task.loadById')
+  loadTaskById(params: LoadTaskByIdInputDto): Promise<LoadTaskByIdOutputDto> {
     return this.loadTaskByIdUseCase.execute(params);
   }
 
-  @Put(':taskId')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @MessagePattern('task.updateById')
   updateTaskById(
-    @Param('taskId', new ParseUUIDPipe()) taskId: string,
-    @Body() dto: UpdateTaskByIdInputDto,
+    dto: UpdateTaskByIdInputDto,
   ): Promise<UpdateTaskByIdOutputDto> {
-    return this.updateTaskByIdUseCase.execute(taskId, dto);
+    return this.updateTaskByIdUseCase.execute(dto);
   }
 
-  @Delete(':taskId')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @MessagePattern('task.deleteById')
   deleteTaskById(
-    @Param() params: DeleteTaskByIdInputDto,
+    body: DeleteTaskByIdInputDto,
   ): Promise<DeleteTaskByIdOutputDto> {
-    return this.deleteTaskByIdUseCase.execute(params);
+    return this.deleteTaskByIdUseCase.execute(body);
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  createTask(@Body() dto: CreateTaskInputDto): Promise<CreateTaskOutputDto> {
+  @MessagePattern('task.create')
+  createTask(dto: CreateTaskInputDto): Promise<CreateTaskOutputDto> {
     return this.createTaskUseCase.execute(dto);
   }
 }

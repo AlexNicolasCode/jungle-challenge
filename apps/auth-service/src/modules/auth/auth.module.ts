@@ -19,6 +19,7 @@ import { PasswordRepository, UserRepository } from 'src/database/repositories';
 import { PasswordEntity, UserEntity } from 'src/database/entities';
 import {
   CreateUserUseCase,
+  GetUserByTokenUseCase,
   LoginUseCase,
   RefreshTokenUseCase,
 } from './usecases';
@@ -30,6 +31,7 @@ import {
   ],
   controllers: [AuthController],
   providers: [
+    GetUserByTokenUseCase,
     LoginUseCase,
     CreateUserUseCase,
     RefreshTokenUseCase,

@@ -1,21 +1,14 @@
-import { Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
   IsOptional,
   IsDateString,
   IsEnum,
-  IsUUID,
-  ValidateNested,
 } from 'class-validator';
-import { LoggedUserInputDto } from 'src/shared/dtos';
 
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
 export class UpdateTaskByIdInputDto {
-  @IsUUID()
-  id: string;
-
   @IsString()
   @IsNotEmpty()
   title: string;
@@ -35,8 +28,4 @@ export class UpdateTaskByIdInputDto {
   @IsEnum(TaskStatusEnum)
   @IsNotEmpty()
   status: TaskStatusEnum;
-
-  @ValidateNested()
-  @Type(() => LoggedUserInputDto)
-  loggedUser: LoggedUserInputDto;
 }

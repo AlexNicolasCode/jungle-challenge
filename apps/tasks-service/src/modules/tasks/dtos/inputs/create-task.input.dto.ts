@@ -12,6 +12,7 @@ import {
 import { Type } from 'class-transformer';
 
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
+import { LoggedUserInputDto } from 'src/shared/dtos';
 
 export class TaskUserInputDto {
   @IsUUID()
@@ -38,6 +39,10 @@ export class CreateTaskInputDto {
   @IsEnum(TaskPriorityEnum)
   @IsNotEmpty()
   priority: TaskPriorityEnum;
+
+  @ValidateNested()
+  @Type(() => LoggedUserInputDto)
+  loggedUser: LoggedUserInputDto;
 
   @IsEnum(TaskStatusEnum)
   @IsNotEmpty()

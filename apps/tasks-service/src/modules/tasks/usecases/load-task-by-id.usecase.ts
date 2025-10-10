@@ -16,7 +16,9 @@ export class LoadTaskByIdUseCase {
   constructor(private readonly loadTaskByIdService: LoadTaskByIdService) {}
 
   async execute(dto: LoadTaskByIdInputDto): Promise<LoadTaskByIdOutputDto> {
-    const task = await this.loadTaskByIdService.loadTaskById(dto);
+    const task = await this.loadTaskByIdService.loadTaskById({
+      taskId: dto.id,
+    });
     if (!task) {
       throw new NotFoundException('Task not found');
     }

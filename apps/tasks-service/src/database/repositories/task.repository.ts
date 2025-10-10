@@ -72,20 +72,15 @@ export class TaskRepository {
     });
   }
 
-  async updateById({
-    taskId,
-    task,
-  }: {
-    taskId: string;
-    task: {
-      title: string;
-      description?: string;
-      deadline: Date;
-      priority: TaskPriorityEnum;
-      status: TaskStatusEnum;
-    };
+  async updateById(task: {
+    id: string;
+    title: string;
+    description?: string;
+    deadline: Date;
+    priority: TaskPriorityEnum;
+    status: TaskStatusEnum;
   }): Promise<void> {
-    await this.taskRepository.update({ id: taskId }, task);
+    await this.taskRepository.update({ id: task.id }, task);
   }
 
   async deleteById(taskId: string): Promise<void> {

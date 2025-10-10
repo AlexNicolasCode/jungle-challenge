@@ -1,6 +1,6 @@
 import { IsUUID } from 'class-validator';
 
-export class LoadTaskByIdInputDto {
+export class DeleteTaskByIdInputDto {
   @IsUUID()
   id: string;
 }

@@ -23,24 +23,26 @@ export class UpdateTaskByIdUseCase {
     private readonly notifyTaskUpdatedService: NotifyTaskUpdatedService,
   ) {}
 
-  async execute(
-    taskId: string,
-    task: UpdateTaskByIdInputDto,
-  ): Promise<UpdateTaskByIdOutputDto> {
+  async execute(dto: UpdateTaskByIdInputDto): Promise<UpdateTaskByIdOutputDto> {
     const storagedTask = await this.loadTaskByIdService.loadTaskById({
-      taskId,
+      taskId: dto.id,
     });
     if (!storagedTask) {
       throw new NotFoundException('Task not found');
     }
     try {
-      await this.updateTaskByIdService.updateTaskById({ taskId, task });
-      console.log(storagedTask.users);
+      await this.updateTaskByIdService.updateTaskById({
+        id: dto.id,
+        title: dto.title,
+        deadline: dto.deadline,
+        priority: dto.priority,
+        status: dto.status,
+      });
       for (const users of storagedTask.users) {
         this.notifyTaskUpdatedService.notifyTaskUpdate({
-          taskId,
+          taskId: dto.id,
           authorId: users.id,
-          taskTitle: task.title,
+          taskTitle: dto.title,
         });
       }
       return null;

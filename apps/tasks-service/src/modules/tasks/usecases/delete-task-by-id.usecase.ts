@@ -19,12 +19,13 @@ export class DeleteTaskByIdUseCase {
   ) {}
 
   async execute(dto: DeleteTaskByIdInputDto): Promise<DeleteTaskByIdOutputDto> {
-    const task = await this.loadTaskByIdService.loadTaskById(dto);
+    const taskId = dto.id;
+    const task = await this.loadTaskByIdService.loadTaskById({ taskId });
     if (!task) {
       throw new NotFoundException('Task not found');
     }
     try {
-      await this.deleteTaskByIdService.deleteTaskById(dto);
+      await this.deleteTaskByIdService.deleteTaskById({ taskId });
       return null;
     } catch (error) {
       this.logger.error(error);
