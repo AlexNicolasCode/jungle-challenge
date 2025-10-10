@@ -5,7 +5,7 @@ export type TaskEntity = {
   id: string;
   title: string;
   description?: string;
-  deadline: Date;
+  deadline: string;
   priority: TaskPriorityEnum;
   status: TaskStatusEnum;
   createdAt: Date;
