@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { AxiosResponse } from 'axios';
-import { useNavigate } from '@tanstack/react-router';
 
 import { AuthProviderProps, Tokens } from './auth.types';
 import { AuthContext } from './auth.context';
