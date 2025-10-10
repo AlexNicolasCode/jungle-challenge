@@ -7,9 +7,14 @@ const RootLayout = () => {
 
   const renderAuthenticatedTopBar = () => {
     return (
-      <Link to="/" className="[&.active]:font-bold">
+      <>
+        <Link to="/" className="[&.active]:font-bold">
         Home
-      </Link>
+        </Link>
+        <Link to="/tasks/create" className="[&.active]:font-bold">
+          Create Task
+        </Link>
+      </>
     )
   }
 
