@@ -3,9 +3,9 @@ import { createRoot } from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 
 import { routeTree } from './routeTree.gen'
+import { AuthProvider, TaskProvider } from './contexts'
 
 import './global.css'
-import { AuthProvider } from './contexts/auth'
 
 const router = createRouter({ routeTree })
 
@@ -21,7 +21,9 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <AuthProvider>
-        <RouterProvider router={router} />
+        <TaskProvider>
+          <RouterProvider router={router} />
+        </TaskProvider>
       </AuthProvider>
     </StrictMode>,
   )

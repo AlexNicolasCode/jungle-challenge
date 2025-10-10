@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export interface Tokens {
+export type Tokens = {
   accessToken: string;
   refreshToken: string;
   expireIn?: number;
@@ -9,7 +9,7 @@ export interface Tokens {
 
 export interface AuthContextType {
   isAuthenticated: boolean;
-  tokens?: Tokens;
+  tokens: Tokens | null;
   loading: boolean;
   login: (data: { email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
   registerUser: (data: { name: string; email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
@@ -17,6 +17,6 @@ export interface AuthContextType {
   refreshToken: () => Promise<{ success: boolean; error?: any }>;
 }
 
-export interface AuthProviderProps {
+export type AuthProviderProps = {
   children: ReactNode;
 }

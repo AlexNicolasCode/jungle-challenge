@@ -1,37 +1,74 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useCallback } from 'react';
 
-import { useAuth } from '../hooks';
+import { useTasks } from '../hooks';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
 
 function HomePage() {
-  const navigate = useNavigate();
-  const { tokens, logout } = useAuth();
+  const { tasks, loading, error, loadTasks, handleNextPage } = useTasks();
 
-  const logoutUser = () => {
-    logout();
-    navigate({ to: '/login' });
-  }
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    const shouldRenderNextPage = scrollTop + clientHeight >= scrollHeight - 10 && !loading;
+    if (!shouldRenderNextPage) {
+      return;
+    }
+    handleNextPage();
+  }, [loading, handleNextPage]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-4">Welcome to the Home Page</h1>
-      {tokens ? (
-        <>
-          <p className="mb-4">You are logged in. Access Token:</p>
-          <code className="bg-white p-2 rounded shadow break-words">{tokens.accessToken}</code>
-          <button
-            onClick={logoutUser}
-            className="mt-6 bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition"
-          >
-            Logout
-          </button>
-        </>
-      ) : (
-        <p className="text-gray-600">You are not logged in.</p>
+    <div className="min-h-screen bg-gray-100 p-6">
+      {loading && <p>Loading tasks...</p>}
+      {error && <p className="text-red-500">Error: {error}</p>}
+
+      {tasks.length === 0 && !loading && (
+        <p className="text-gray-600">No tasks available.</p>
       )}
+
+      <ul className="space-y-4">
+        {tasks.map((task) => (
+          <li
+            key={task.id}
+            className="bg-white p-4 rounded shadow flex justify-between items-center"
+          >
+            <div>
+              <h2
+                className={`text-lg font-semibold ${
+                  task.completed ? 'line-through text-gray-500' : ''
+                }`}
+              >
+                {task.title}
+              </h2>
+              {task.description && (
+                <p className="text-gray-600">{task.description}</p>
+              )}
+            </div>
+            <span
+              className={`px-2 py-1 rounded ${
+                task.completed
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-yellow-100 text-yellow-800'
+              }`}
+            >
+              {task.completed ? 'Completed' : 'Pending'}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
-};
+}
+
+export default HomePage;
