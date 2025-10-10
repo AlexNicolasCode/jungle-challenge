@@ -5,7 +5,7 @@ import { TaskProviderProps } from './task.types';
 import { taskApiClient } from '../../clients/tasks';
 import { useAuth } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { TaskEntity } from '../../shared/types';
+import { TaskEntity, UserEntity } from '../../shared/types';
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const { refreshToken } = useAuth();
@@ -105,7 +105,16 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
-  const createTask = async (task: Omit<TaskEntity, 'id'>) => {
+  const createTask = async (task: {
+      title: string;
+      description?: string;
+      deadline: string;
+      priority: TaskPriorityEnum;
+      status: TaskStatusEnum;
+      createdAt: Date;
+      updatedAt: Date;
+      users: UserEntity[];
+    }) => {
     if (loading) {
       return;
     }
@@ -122,18 +131,29 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
-  const updateTask = async (taskId: string, data: Partial<Omit<TaskEntity, 'id'>>) => {
+  const updateTask = async (taskId: string, data: {
+      title: string;
+      description?: string;
+      deadline: string;
+      priority: TaskPriorityEnum;
+      status: TaskStatusEnum;
+      createdAt: Date;
+      updatedAt: Date;
+      users: UserEntity[];
+    }) => {
     if (loading) {
       return;
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.put<TaskEntity>(`${taskId}`, data);
+       await taskApiClient.put<void>(`${taskId}`, data);
       setTasks((prev) =>
-        prev.map((task) => (task.id === taskId ? response.data : task))
+        prev.map((task) => ({
+          ...task,
+          updatedAt: new Date(),
+        }))
       );
       setError(undefined);
-      return response.data;
     } catch (err: any) {
       retry(err.response?.data?.statusCode, () => updateTask(taskId, data));
     } finally {

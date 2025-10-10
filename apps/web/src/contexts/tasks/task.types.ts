@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 
-import { TaskEntity } from "../../shared/types";
+import { TaskEntity, UserEntity } from "../../shared/types";
+import { TaskPriorityEnum, TaskStatusEnum } from "../../shared/enums";
 
 export interface TasksContextType {
   tasks: TaskEntity[];
@@ -9,8 +10,26 @@ export interface TasksContextType {
   loadTasks: () => Promise<void>;
   handleNextPage: () => void;
   loadTaskById: (taskId: string) => Promise<TaskEntity | undefined>;
-  createTask: (data: Omit<TaskEntity, 'id'>) => Promise<TaskEntity | undefined>;
-  updateTask: (taskId: string, data: Partial<Omit<TaskEntity, 'id'>>) => Promise<TaskEntity | undefined>;
+  createTask: (data: {
+    title: string;
+    description?: string;
+    deadline: string;
+    priority: TaskPriorityEnum;
+    status: TaskStatusEnum;
+    createdAt: Date;
+    updatedAt: Date;
+    users: UserEntity[];
+  }) => Promise<void>;
+  updateTask: (taskId: string, data: {
+    title: string;
+    description?: string;
+    deadline: string;
+    priority: TaskPriorityEnum;
+    status: TaskStatusEnum;
+    createdAt: Date;
+    updatedAt: Date;
+    users: UserEntity[];
+  }) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
 }
 
