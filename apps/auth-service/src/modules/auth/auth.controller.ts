@@ -1,4 +1,5 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 
 import {
   CreateUserUseCase,
@@ -14,7 +15,7 @@ import {
   RefreshTokenOutputDto,
 } from './dtos';
 
-@Controller('api/auth')
+@Controller()
 export class AuthController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
@@ -22,20 +23,18 @@ export class AuthController {
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
   ) {}
 
-  @Post('register')
-  register(@Body() dto: CreateUserInputDto): Promise<CreateUserOutputDto> {
+  @MessagePattern('auth.register')
+  register(dto: CreateUserInputDto): Promise<CreateUserOutputDto> {
     return this.createUserUseCase.execute(dto);
   }
 
-  @Post('login')
-  login(@Body() dto: LoginInputDto): Promise<LoginOutputDto> {
+  @MessagePattern('auth.login')
+  login(dto: LoginInputDto): Promise<LoginOutputDto> {
     return this.loginUseCase.execute(dto);
   }
 
-  @Post('refresh')
-  refreshToken(
-    @Body() dto: RefreshTokenInputDto,
-  ): Promise<RefreshTokenOutputDto> {
+  @MessagePattern('auth.refresh')
+  refreshToken(dto: RefreshTokenInputDto): Promise<RefreshTokenOutputDto> {
     return this.refreshTokenUseCase.execute(dto);
   }
 }
