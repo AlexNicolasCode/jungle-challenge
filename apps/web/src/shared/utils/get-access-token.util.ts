@@ -1,4 +1,4 @@
-import { Tokens } from "../contexts"
+import { Tokens } from "../../contexts"
 
 export const getAccessToken = (): string | undefined => {
     const tokensStringfied = localStorage.getItem('tokens');

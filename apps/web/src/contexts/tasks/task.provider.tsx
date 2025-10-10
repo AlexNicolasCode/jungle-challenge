@@ -58,14 +58,14 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setPage(nextPage);
   }
 
-  const loadTask = async (taskId: string) => {
+  const loadTaskById = async (taskId: string) => {
     setLoading(true);
     try {
       const response = await taskApiClient.get<Task>(`${taskId}`);
       setError(undefined);
       return response.data;
     } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => loadTask(taskId));
+      retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
     } finally {
       setLoading(false);
     }
@@ -121,7 +121,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         loading,
         error,
         loadTasks,
-        loadTask,
+        loadTaskById,
         createTask,
         updateTask,
         deleteTask,

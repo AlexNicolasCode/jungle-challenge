@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useCallback } from 'react';
 
 import { useTasks } from '../hooks';
+import { TaskStatusEnum } from '../shared/enums';
 
 export const Route = createFileRoute('/')({
   component: HomePage,
@@ -46,23 +47,20 @@ function HomePage() {
             <div>
               <h2
                 className={`text-lg font-semibold ${
-                  task.completed ? 'line-through text-gray-500' : ''
+                  task.status === TaskStatusEnum.DONE ? 'line-through text-gray-500' : ''
                 }`}
               >
                 {task.title}
               </h2>
-              {task.description && (
-                <p className="text-gray-600">{task.description}</p>
-              )}
             </div>
             <span
               className={`px-2 py-1 rounded ${
-                task.completed
+                task.status
                   ? 'bg-green-100 text-green-800'
                   : 'bg-yellow-100 text-yellow-800'
               }`}
             >
-              {task.completed ? 'Completed' : 'Pending'}
+              {task.status}
             </span>
           </li>
         ))}

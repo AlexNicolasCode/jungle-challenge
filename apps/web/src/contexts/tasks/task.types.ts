@@ -1,21 +1,16 @@
 import { ReactNode } from "react";
 
-export type Task = {
-  id: string;
-  title: string;
-  description?: string;
-  completed: boolean;
-}
+import { TaskEntity } from "../../shared/types";
 
 export interface TasksContextType {
-  tasks: Task[];
+  tasks: TaskEntity[];
   loading: boolean;
   error?: string;
   loadTasks: () => Promise<void>;
   handleNextPage: () => void;
-  loadTask: (taskId: string) => Promise<Task | undefined>;
-  createTask: (data: Omit<Task, 'id'>) => Promise<Task | undefined>;
-  updateTask: (taskId: string, data: Partial<Omit<Task, 'id'>>) => Promise<Task | undefined>;
+  loadTaskById: (taskId: string) => Promise<TaskEntity | undefined>;
+  createTask: (data: Omit<TaskEntity, 'id'>) => Promise<TaskEntity | undefined>;
+  updateTask: (taskId: string, data: Partial<Omit<TaskEntity, 'id'>>) => Promise<TaskEntity | undefined>;
   deleteTask: (taskId: string) => Promise<void>;
 }
 
