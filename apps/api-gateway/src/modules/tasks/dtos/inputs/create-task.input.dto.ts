@@ -6,7 +6,6 @@ import {
   IsEnum,
   IsArray,
   IsUUID,
-  ArrayMinSize,
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -46,6 +45,5 @@ export class CreateTaskInputDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => TaskUserInputDto)
-  @ArrayMinSize(2)
   users: TaskUserInputDto[];
 }

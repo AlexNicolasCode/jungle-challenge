@@ -77,18 +77,18 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
-  const createTask = async (data: Omit<Task, 'id'>) => {
+  const createTask = async (task: Omit<Task, 'id'>) => {
     if (loading) {
       return;
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.post<Task>('', data);
-      setTasks((prev) => [...prev, response.data]);
+      const response = await taskApiClient.post<Task>('', task);
+      const taskId: string = response.data.id;
+      setTasks((prev) => [...prev, { id: taskId, ...task }]);
       setError(undefined);
-      return response.data;
     } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => createTask(data));
+      retry(err.response?.data?.statusCode, () => createTask(task));
     } finally {
       setLoading(false);
     }
