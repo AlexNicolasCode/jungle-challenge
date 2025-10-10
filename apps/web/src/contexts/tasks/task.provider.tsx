@@ -1,17 +1,45 @@
 import React, { useCallback, useState } from 'react';
 
 import { TasksContext } from './task.context';
-import { TaskProviderProps, Task } from './task.types';
+import { TaskProviderProps } from './task.types';
 import { taskApiClient } from '../../clients/tasks';
 import { useAuth } from '../../hooks';
+import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
+import { TaskEntity } from '../../shared/types';
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const { refreshToken } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(1);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskEntity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
+
+  const sortedTasks = React.useMemo(() => {
+    const priorityOrder: Record<TaskPriorityEnum, number> = {
+      [TaskPriorityEnum.URGENT]: 0,
+      [TaskPriorityEnum.HIGH]: 1,
+      [TaskPriorityEnum.MEDIUM]: 2,
+      [TaskPriorityEnum.LOW]: 3,
+    };
+
+    const statusOrder: Record<TaskStatusEnum, number> = {
+      [TaskStatusEnum.TODO]: 0,
+      [TaskStatusEnum.IN_PROGRESS]: 1,
+      [TaskStatusEnum.REVIEW]: 2,
+      [TaskStatusEnum.DONE]: 3,
+    };
+
+    return [...tasks].sort((a: TaskEntity, b: TaskEntity) => {
+      const priorityA = priorityOrder[a.priority as TaskPriorityEnum];
+      const priorityB = priorityOrder[a.priority as TaskPriorityEnum];
+      const statusA = statusOrder[a.status as TaskStatusEnum];
+      const statusB = statusOrder[b.status as TaskStatusEnum];
+      const priorityDiff = priorityA - priorityB;
+      if (priorityDiff !== 0) return priorityDiff;
+      return statusA - statusB;
+    });
+  }, [tasks]);
 
   const retry = async (statusCode: number, callback: () => void) => {
     const isAuthenticatedError = statusCode === 401;
@@ -38,7 +66,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
           size: 10,
         }
       });
-      const tasks: Task[] = response.data?.list ?? [];
+      const tasks: TaskEntity[] = response.data?.list ?? [];
       const totalPages: number = response.data?.totalPagess ?? 1;
       setMaxPage(totalPages);
       setTasks(tasks);
@@ -67,7 +95,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.get<Task>(`${taskId}`);
+      const response = await taskApiClient.get<TaskEntity>(`${taskId}`);
       setError(undefined);
       return response.data;
     } catch (err: any) {
@@ -77,13 +105,13 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
-  const createTask = async (task: Omit<Task, 'id'>) => {
+  const createTask = async (task: Omit<TaskEntity, 'id'>) => {
     if (loading) {
       return;
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.post<Task>('', task);
+      const response = await taskApiClient.post<TaskEntity>('', task);
       const taskId: string = response.data.id;
       setTasks((prev) => [...prev, { id: taskId, ...task }]);
       setError(undefined);
@@ -94,13 +122,13 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
-  const updateTask = async (taskId: string, data: Partial<Omit<Task, 'id'>>) => {
+  const updateTask = async (taskId: string, data: Partial<Omit<TaskEntity, 'id'>>) => {
     if (loading) {
       return;
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.put<Task>(`${taskId}`, data);
+      const response = await taskApiClient.put<TaskEntity>(`${taskId}`, data);
       setTasks((prev) =>
         prev.map((task) => (task.id === taskId ? response.data : task))
       );
@@ -132,7 +160,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   return (
     <TasksContext.Provider
       value={{
-        tasks,
+        tasks: sortedTasks,
         loading,
         error,
         loadTasks,
