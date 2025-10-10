@@ -27,6 +27,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   }
 
   const loadTasks = useCallback(async () => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await taskApiClient.get('', {
@@ -59,6 +62,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   }
 
   const loadTaskById = async (taskId: string) => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await taskApiClient.get<Task>(`${taskId}`);
@@ -72,6 +78,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   };
 
   const createTask = async (data: Omit<Task, 'id'>) => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await taskApiClient.post<Task>('', data);
@@ -86,6 +95,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   };
 
   const updateTask = async (taskId: string, data: Partial<Omit<Task, 'id'>>) => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await taskApiClient.put<Task>(`${taskId}`, data);
@@ -102,6 +114,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   };
 
   const deleteTask = async (taskId: string) => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     try {
       await taskApiClient.delete(`${taskId}`);
