@@ -67,7 +67,8 @@ export class CommentRepository {
   }): Promise<{ comments: CommentEntity[]; count: number }> {
     const query = this.commentRepository
       .createQueryBuilder('comment')
-      .leftJoinAndSelect('comment.author', 'author');
+      .leftJoinAndSelect('comment.author', 'author')
+      .orderBy('comment.createdAt', 'DESC');
     const skip = (page - 1) * size;
     query.skip(skip);
     query.take(size);

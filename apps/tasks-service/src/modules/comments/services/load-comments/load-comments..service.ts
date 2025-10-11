@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 
 import { CommentRepository } from 'src/database/repositories';
@@ -26,8 +26,10 @@ export class LoadCommentsService {
       return {
         count,
         comments: comments.map((comment) => ({
+          id: comment.id,
           authorName: comment.author.name,
           content: comment.content,
+          updatedAt: comment.updatedAt,
         })),
       };
     } catch (error) {

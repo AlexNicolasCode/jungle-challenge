@@ -12,7 +12,7 @@ export class CommentController {
     private readonly loadCommentsUseCase: LoadCommentsUseCase,
   ) {}
 
-  @MessagePattern('comment.loadComments')
+  @MessagePattern('comment.load')
   loadComments(dto: LoadCommentsInputDto): Promise<LoadCommentsOutputDto> {
     return this.loadCommentsUseCase.execute(dto);
   }

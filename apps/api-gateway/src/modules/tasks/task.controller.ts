@@ -136,7 +136,7 @@ export class TaskController {
     @Param('id', new ParseUUIDPipe()) taskId: string,
     @Query() params: LoadCommentsInputDto,
   ): Observable<LoadCommentsOutputDto> {
-    return this.taskClient.send('comment.loadComments', {
+    return this.taskClient.send('comment.load', {
       taskId,
       page: params.page,
       size: params.size,
