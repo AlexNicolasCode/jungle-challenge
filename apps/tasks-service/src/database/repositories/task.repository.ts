@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
-import { TaskEntity, UserEntity } from '../entities';
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
+import { TaskEntity, UserEntity } from '../entities';
 
 @Injectable()
 export class TaskRepository {
@@ -26,11 +26,12 @@ export class TaskRepository {
       name: string;
     }[];
   }): Promise<TaskEntity> {
+    const relatedUsers = await Promise.all(
+      task.users.map((user) =>
+        this.userRepository.save({ id: user.id, name: user.name }),
+      ),
+    );
     return this.dataSource.transaction(async (manager) => {
-      const usersIds = task.users.map((u) => u.id);
-      const relatedUsers = await this.userRepository.find({
-        where: { id: In(usersIds) },
-      });
       const updatedUsers = await Promise.all(
         relatedUsers.map((user) => {
           return manager.save(this.userRepository.target, {
