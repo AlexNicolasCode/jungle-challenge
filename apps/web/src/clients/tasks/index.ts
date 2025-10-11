@@ -38,12 +38,8 @@ taskApiClient.interceptors.response.use(
                 ...response.data,
                 refreshToken,
             }))
-            return taskApiClient.request({
-                ...error.config,
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                }
-            });
+            error.config.headers.Authorization = `Bearer ${accessToken}`;
+            return taskApiClient(error.config);
         },
     );
 
