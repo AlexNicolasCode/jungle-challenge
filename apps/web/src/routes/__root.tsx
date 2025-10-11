@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useAuth, useNotification } from '../hooks';
 
 const RootLayout = () => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
     const { renderNotifications } = useNotification();
     const navigate = useNavigate();
 
@@ -25,6 +25,12 @@ const RootLayout = () => {
         <Link to="/tasks/create" className="[&.active]:font-bold">
           Create Task
         </Link>
+        <button onClick={() => {
+            logout();
+            navigate({ to: '/login' });
+        }} className="[&.active]:font-bold">
+          Logout
+        </button>
       </>
     )
   }
