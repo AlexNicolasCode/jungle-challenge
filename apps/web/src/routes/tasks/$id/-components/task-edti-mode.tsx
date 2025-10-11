@@ -1,0 +1,84 @@
+import React from 'react';
+import { TaskPriorityEnum, TaskStatusEnum } from '../../../../shared/enums';
+
+interface TaskEditModeProps {
+  isEditMode: boolean;
+  updating: boolean;
+  register: any;
+  handleSubmit: any;
+  onSubmit: (data) => void;
+  errors: any;
+  isSubmitting: boolean;
+  taskTitle: string;
+  setIsEditMode: (value: boolean) => void;
+}
+
+export const TaskEditMode: React.FC<TaskEditModeProps> = ({
+  isEditMode,
+  updating,
+  register,
+  handleSubmit,
+  onSubmit,
+  errors,
+  isSubmitting,
+  taskTitle,
+  setIsEditMode,
+}) => {
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-3">
+          {isEditMode ? (
+            <input
+              type="text"
+              {...register('title')}
+              className={`border rounded px-2 py-1 text-lg font-medium ${
+                errors.title ? 'border-red-500' : 'border-gray-300'
+              }`}
+              disabled={updating}
+            />
+          ) : (
+            <h1 className="text-2xl font-semibold text-gray-900">{taskTitle}</h1>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          {isEditMode ? (
+            <>
+              <select {...register('status')} disabled={updating} className="border border-gray-300 rounded px-2 py-1">
+                {Object.values(TaskStatusEnum).map((status) => (
+                  <option key={status} value={status}>{status.replace('_', ' ')}</option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                disabled={isSubmitting || updating}
+                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+              >
+                Save
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setIsEditMode(true)}
+              className="text-gray-500 hover:text-gray-700 text-sm font-medium"
+            >
+              Edit
+            </button>
+          )}
+        </div>
+      </div>
+
+      {isEditMode && (
+        <div className="mt-6">
+          <select {...register('priority')} disabled={updating} className="border border-gray-300 rounded px-3 py-2 w-full bg-white">
+            {Object.values(TaskPriorityEnum).map((priority) => (
+              <option key={priority} value={priority}>{priority}</option>
+            ))}
+          </select>
+        </div>
+      )}
+    </form>
+  );
+};
