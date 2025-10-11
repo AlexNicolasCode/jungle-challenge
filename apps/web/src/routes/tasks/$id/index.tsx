@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { useLoading, useTasks } from '../../hooks';
-import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { CommentEntity, TaskEntity } from '../../shared/types';
+import { useLoading, useTasks } from '../../../hooks';
+import { TaskPriorityEnum, TaskStatusEnum } from '../../../shared/enums';
+import { CommentEntity, TaskEntity } from '../../../shared/types';
 
-export const Route = createFileRoute('/tasks/$id')({
+export const Route = createFileRoute('/tasks/$id/')({
   component: TaskDetailsPage,
 });
 
@@ -21,7 +21,7 @@ const editTaskSchema = z.object({
 type EditTaskForm = z.infer<typeof editTaskSchema>;
 
 function TaskDetailsPage() {
-  const { id } = useParams({ from: '/tasks/$id' });
+  const { id } = useParams({ from: '/tasks/$id/' });
   const { loading: globalLoading, renderLoading } = useLoading();
   const { loadTaskById, updateTask, loadCommentsByTaskId, createCommentByTaskId } = useTasks();
   const navigate = useNavigate();
