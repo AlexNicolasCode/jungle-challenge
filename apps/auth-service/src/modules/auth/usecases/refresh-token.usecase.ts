@@ -1,15 +1,15 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnprocessableEntityException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    UnprocessableEntityException,
 } from '@nestjs/common';
 
 import { RefreshTokenInputDto, RefreshTokenOutputDto } from '../dtos';
 import {
-  CheckUserExistsByEmailService,
-  DecodeTokenService,
-  GenerateTokenService,
+    CheckUserExistsByEmailService,
+    DecodeTokenService,
+    GenerateTokenService,
 } from '../services';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class RefreshTokenUseCase {
 
   async execute(dto: RefreshTokenInputDto): Promise<RefreshTokenOutputDto> {
     const decodedToken = this.decodeTokenService.decodeToken({
-      token: dto.refresToken,
+      token: dto.refreshToken,
       type: 'refresh',
     });
     if (!decodedToken || !decodedToken?.email || !decodedToken?.name) {

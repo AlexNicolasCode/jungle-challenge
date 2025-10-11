@@ -1,5 +1,5 @@
-import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
 
 export class RefreshTokenInputDto {
   @ApiProperty({
@@ -7,5 +7,5 @@ export class RefreshTokenInputDto {
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
   })
   @IsString()
-  refresToken: string;
+  refreshToken: string;
 }
