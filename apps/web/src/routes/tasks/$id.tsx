@@ -151,7 +151,6 @@ function TaskDetailsPage() {
       </button>
 
       <div className="bg-white rounded-2xl shadow p-6">
-        {/* Task Edit Form */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3">
@@ -257,7 +256,6 @@ function TaskDetailsPage() {
           </div>
         </form>
 
-        {/* Assigned Users */}
         <div className="mt-8">
           <p className="font-medium text-gray-800 mb-2">Assigned Users</p>
           {task.users && task.users.length > 0 ? (
