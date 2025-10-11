@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 import { useLoading, useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { TaskEntity } from '../../shared/types';
+import { CommentEntity, TaskEntity } from '../../shared/types';
 
 export const Route = createFileRoute('/tasks/$id')({
   component: TaskDetailsPage,
@@ -24,14 +24,16 @@ function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id' });
   const { loading: globalLoading, renderLoading } = useLoading();
   const navigate = useNavigate();
-  const { loadTaskById, updateTask, loadCommentsByTaskId } = useTasks();
+  const { loadTaskById, updateTask, loadCommentsByTaskId, createCommentByTaskId } = useTasks();
 
   const [task, setTask] = useState<TaskEntity | null>(null);
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<CommentEntity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [newComment, setNewComment] = useState<string>('');
+  const [commentSubmitting, setCommentSubmitting] = useState(false);
 
   const {
     register,
@@ -92,6 +94,21 @@ function TaskDetailsPage() {
     }
   };
 
+  const handleAddComment = async () => {
+    if (!newComment.trim() || !task) return;
+    try {
+      setCommentSubmitting(true);
+      await createCommentByTaskId({ taskId: task.id, content: newComment });
+      const fetchedComments = await loadCommentsByTaskId(id);
+      setComments(fetchedComments);
+      setNewComment('');
+    } catch (err: any) {
+      alert(err.message || 'Failed to add comment');
+    } finally {
+      setCommentSubmitting(false);
+    }
+  };
+
   if (loading || globalLoading) return renderLoading('Loading task details...');
   if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
   if (!task) return <div className="p-6 text-gray-600">Task not found.</div>;
@@ -134,6 +151,7 @@ function TaskDetailsPage() {
       </button>
 
       <div className="bg-white rounded-2xl shadow p-6">
+        {/* Task Edit Form */}
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3">
@@ -239,6 +257,7 @@ function TaskDetailsPage() {
           </div>
         </form>
 
+        {/* Assigned Users */}
         <div className="mt-8">
           <p className="font-medium text-gray-800 mb-2">Assigned Users</p>
           {task.users && task.users.length > 0 ? (
@@ -268,7 +287,7 @@ function TaskDetailsPage() {
                 >
                   <p className="text-sm text-gray-700">{comment.content}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    — {comment.author} at {new Date(comment.createdAt).toLocaleString()}
+                    — {comment.authorName}
                   </p>
                 </li>
               ))}
@@ -276,6 +295,24 @@ function TaskDetailsPage() {
           ) : (
             <p className="text-gray-500 italic">No comments yet</p>
           )}
+
+          <div className="mt-4 flex gap-2">
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="flex-1 border border-gray-300 rounded px-3 py-2"
+              disabled={commentSubmitting}
+            />
+            <button
+              onClick={handleAddComment}
+              disabled={commentSubmitting || !newComment.trim()}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {commentSubmitting ? 'Adding...' : 'Add'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -166,6 +166,23 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
   };
 
+  const createCommentByTaskId = async ({
+    taskId,
+    content,
+  }: {
+    taskId: string;
+    content: string;
+  }) => {
+    try {
+      await taskApiClient.post<void>(`${taskId}/comments`, {
+        content,
+      });
+      setError(undefined);
+    } catch (err: any) {
+      retry(err.response?.data?.statusCode, () => createTask(task));
+    }
+  };
+
   const updateTask = async (taskId: string, task: {
       title: string;
       description?: string;
@@ -230,6 +247,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         deleteTask,
         handleNextPage,
         loadCommentsByTaskId,
+        createCommentByTaskId,
       }}
     >
       {children}

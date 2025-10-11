@@ -32,6 +32,7 @@ export interface TasksContextType {
   }) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
   loadCommentsByTaskId: (taskId: string) => Promise<CommentEntity[]>;
+  createCommentByTaskId: (params: { taskId: string; content: string }) => Promise<void>;
 }
 
 export type TaskProviderProps = {
