@@ -2,6 +2,9 @@ import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class CreateCommentInputDto {
   @IsUUID()
+  taskId: string;
+
+  @IsUUID()
   authorId: string;
 
   @IsString()

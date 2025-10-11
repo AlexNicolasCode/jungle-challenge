@@ -25,10 +25,14 @@ import { Observable } from 'rxjs';
 
 import { LoggedUser, LoggedUserOutputDto } from 'src/shared/decorators';
 import {
+    CreateCommentInputDto,
+    CreateCommentOutputDto,
     CreateTaskInputDto,
     CreateTaskOutputDto,
     DeleteTaskByIdInputDto,
     DeleteTaskByIdOutputDto,
+    LoadCommentsInputDto,
+    LoadCommentsOutputDto,
     LoadTaskByIdInputDto,
     LoadTaskByIdOutputDto,
     LoadTasksInputDto,
@@ -120,6 +124,41 @@ export class TaskController {
       ...dto,
       users: [{ id: loggedUser.id, name: loggedUser.name }],
       loggedUser,
+    });
+  }
+
+  @Get(':id/comments')
+  @ApiOperation({ summary: 'Delete a task by its ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Task UUID' })
+  @ApiResponse({ status: 200, description: 'Comments loaded successfully' })
+  @ApiResponse({ status: 404, description: 'Task not found' })
+  loadTaskComments(
+    @Param('id', new ParseUUIDPipe()) taskId: string,
+    @Query() params: LoadCommentsInputDto,
+  ): Observable<LoadCommentsOutputDto> {
+    return this.taskClient.send('comment.loadComments', {
+      taskId,
+      page: params.page,
+      size: params.size,
+    });
+  }
+
+  @Post(':id/comments')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Create Comment in Task' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Task UUID' })
+  @ApiResponse({ status: 201, description: 'Comment created successfully' })
+  @ApiResponse({ status: 404, description: 'Task not found' })
+  createTaskComment(
+    @Param('id', new ParseUUIDPipe()) taskId: string,
+    @Body() dto: CreateCommentInputDto,
+    @LoggedUser() loggedUser: LoggedUserOutputDto,
+  ): Observable<CreateCommentOutputDto> {
+    return this.taskClient.send('comment.create', {
+      ...dto,
+      taskId,
+      authorId: loggedUser.id,
+      authorName: loggedUser.name,
     });
   }
 }

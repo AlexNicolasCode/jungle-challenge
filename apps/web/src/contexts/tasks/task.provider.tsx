@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { taskApiClient } from '../../clients/tasks';
 import { useAuth } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { TaskEntity, UserEntity } from '../../shared/types';
+import { CommentEntity, TaskEntity, UserEntity } from '../../shared/types';
 import { TasksContext } from './task.context';
 import { TaskProviderProps } from './task.types';
 
@@ -11,6 +11,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const { loadTokens, refreshToken } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(1);
+  const [commentsPage, setCommentPage] = useState<number>(1);
+  const [maxCommentPage, setMaxCommentPage] = useState<number>(1);
   const [tasks, setTasks] = useState<TaskEntity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
@@ -101,6 +103,30 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         const response = await taskApiClient.get<TaskEntity>(`${taskId}`);
         setError(undefined);
         return response.data;
+    } catch (err: any) {
+        retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  const loadCommentsByTaskId = async (taskId: string): Promise<CommentEntity[]> => {
+    if (loading) {
+      return [];
+    }
+    setLoading(true);
+    try {
+        const response = await taskApiClient.get(`${taskId}/comments`, {
+            params: {
+                page: commentsPage,
+                size: 10,
+            },
+        });
+        const comments: CommentEntity[] = response.data?.list ?? [];
+        const totalPages: number = response.data?.totalPagess ?? 1;
+        setCommentPage(totalPages);
+        setError(undefined);
+        return comments;
     } catch (err: any) {
         retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
     } finally {
@@ -203,6 +229,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         updateTask,
         deleteTask,
         handleNextPage,
+        loadCommentsByTaskId,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
-import { TaskEntity, UserEntity } from "../../shared/types";
 import { TaskPriorityEnum, TaskStatusEnum } from "../../shared/enums";
+import { CommentEntity, TaskEntity, UserEntity } from "../../shared/types";
 
 export interface TasksContextType {
   tasks: TaskEntity[];
@@ -31,6 +31,7 @@ export interface TasksContextType {
     users: UserEntity[];
   }) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
+  loadCommentsByTaskId: (taskId: string) => Promise<CommentEntity[]>;
 }
 
 export type TaskProviderProps = {

@@ -1,14 +1,14 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
 } from '@nestjs/common';
 
+import { LoadTaskByIdService } from 'src/modules/tasks/services';
 import { LoadCommentsInputDto } from '../dtos/inputs';
 import { LoadCommentsOutputDto } from '../dtos/outputs';
 import { LoadCommentsService } from '../services';
-import { LoadTaskByIdService } from 'src/modules/tasks/services';
 
 @Injectable()
 export class LoadCommentsUseCase {
@@ -19,10 +19,8 @@ export class LoadCommentsUseCase {
     private readonly loadCommentsService: LoadCommentsService,
   ) {}
 
-  async execute(
-    taskId: string,
-    dto: LoadCommentsInputDto,
-  ): Promise<LoadCommentsOutputDto> {
+  async execute(dto: LoadCommentsInputDto): Promise<LoadCommentsOutputDto> {
+    const taskId = dto.taskId;
     const task = await this.loadTaskByIdService.loadTaskById({
       taskId,
     });

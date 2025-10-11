@@ -1,40 +1,24 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Param,
-  ParseUUIDPipe,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 
 import { CreateCommentInputDto, LoadCommentsInputDto } from './dtos/inputs';
 import { CreateCommentOutputDto, LoadCommentsOutputDto } from './dtos/outputs';
 import { CreateCommentUseCase, LoadCommentsUseCase } from './usecases';
 
-@Controller('api/tasks/:taskId/comments')
+@Controller()
 export class CommentController {
   constructor(
     private readonly createCommentUseCase: CreateCommentUseCase,
     private readonly loadCommentsUseCase: LoadCommentsUseCase,
   ) {}
 
-  @Get()
-  loadComments(
-    @Param('taskId', new ParseUUIDPipe()) taskId: string,
-    @Query() dto: LoadCommentsInputDto,
-  ): Promise<LoadCommentsOutputDto> {
-    return this.loadCommentsUseCase.execute(taskId, dto);
+  @MessagePattern('comment.loadComments')
+  loadComments(dto: LoadCommentsInputDto): Promise<LoadCommentsOutputDto> {
+    return this.loadCommentsUseCase.execute(dto);
   }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  createComment(
-    @Param('taskId', new ParseUUIDPipe()) taskId: string,
-    @Body() dto: CreateCommentInputDto,
-  ): Promise<CreateCommentOutputDto> {
-    return this.createCommentUseCase.execute(taskId, dto);
+  @MessagePattern('comment.create')
+  createComment(dto: CreateCommentInputDto): Promise<CreateCommentOutputDto> {
+    return this.createCommentUseCase.execute(dto);
   }
 }

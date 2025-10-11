@@ -1,12 +1,12 @@
-import { createFileRoute, useParams, useNavigate } from '@tanstack/react-router';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useLoading, useTasks } from '../../hooks';
+import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
 import { TaskEntity } from '../../shared/types';
-import { TaskStatusEnum, TaskPriorityEnum } from '../../shared/enums';
 
 export const Route = createFileRoute('/tasks/$id')({
   component: TaskDetailsPage,
@@ -23,10 +23,11 @@ type EditTaskForm = z.infer<typeof editTaskSchema>;
 function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id' });
   const { loading: globalLoading, renderLoading } = useLoading();
-  const { loadTaskById, updateTask } = useTasks();
   const navigate = useNavigate();
+  const { loadTaskById, updateTask, loadCommentsByTaskId } = useTasks();
 
   const [task, setTask] = useState<TaskEntity | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -46,16 +47,18 @@ function TaskDetailsPage() {
       if (loading) return;
       try {
         setLoading(true);
-        const fetched = await loadTaskById(id);
-        if (!fetched) {
+        const fetchedTask = await loadTaskById(id);
+        if (!fetchedTask) {
           alert('Task not found');
           return;
         }
-        setTask(fetched);
+        const fetchedComments = await loadCommentsByTaskId(id);
+        setTask(fetchedTask);
+        setComments(fetchedComments || []);
         reset({
-          title: fetched.title,
-          priority: fetched.priority,
-          status: fetched.status,
+          title: fetchedTask.title,
+          priority: fetchedTask.priority,
+          status: fetchedTask.status,
         });
       } catch (err: any) {
         setError(err.message || 'Failed to load task');
@@ -70,10 +73,7 @@ function TaskDetailsPage() {
     if (!task) return;
     try {
       setUpdating(true);
-      const updatedTask = {
-        ...task,
-        ...data,
-      };
+      const updatedTask = { ...task, ...data };
       await updateTask(task.id, {
         title: data.title,
         deadline: task.deadline,
@@ -165,7 +165,6 @@ function TaskDetailsPage() {
                       </option>
                     ))}
                   </select>
-
                   <button
                     type="submit"
                     disabled={isSubmitting || updating}
@@ -255,6 +254,27 @@ function TaskDetailsPage() {
             </ul>
           ) : (
             <p className="text-gray-500 italic">No users assigned</p>
+          )}
+        </div>
+
+        <div className="mt-8">
+          <p className="font-medium text-gray-800 mb-2">Comments</p>
+          {comments.length > 0 ? (
+            <ul className="space-y-2">
+              {comments.map((comment) => (
+                <li
+                  key={comment.id}
+                  className="border border-gray-100 rounded-lg p-3 bg-gray-50 text-gray-800"
+                >
+                  <p className="text-sm text-gray-700">{comment.content}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    — {comment.author} at {new Date(comment.createdAt).toLocaleString()}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-500 italic">No comments yet</p>
           )}
         </div>
       </div>
