@@ -10,12 +10,9 @@ export type Tokens = {
 export interface AuthContextType {
   isAuthenticated: boolean;
   tokens: Tokens | null;
-  loading: boolean;
   login: (data: { email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
   registerUser: (data: { name: string; email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
   logout: () => void;
-  refreshToken: () => Promise<{ success: boolean; error?: any }>;
-  loadTokens: () => Tokens;
 }
 
 export type AuthProviderProps = {

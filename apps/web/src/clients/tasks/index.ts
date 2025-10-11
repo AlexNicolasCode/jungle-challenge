@@ -1,6 +1,6 @@
 import axios from "axios";
-
 import { authApiClient } from "../auth";
+
 
 const taskApiClient = axios.create({
         baseURL: 'http://localhost:3000/api/tasks',
@@ -16,6 +16,12 @@ taskApiClient.interceptors.request.use(
             if (accessToken) {
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
+            return config;
+        },
+    );
+
+taskApiClient.interceptors.response.use(
+        (config) => {
             return config;
         },
         async (error) => {
@@ -38,7 +44,7 @@ taskApiClient.interceptors.request.use(
                     Authorization: `Bearer ${accessToken}`,
                 }
             });
-        }
+        },
     );
 
 export { taskApiClient };

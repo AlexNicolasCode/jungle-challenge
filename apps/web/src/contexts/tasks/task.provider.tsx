@@ -66,9 +66,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
           page: page,
           size: 10,
         },
-        headers: {
-            Authorization: `Bearer ${loadTokens().accessToken}`
-        }
       });
       const tasks: TaskEntity[] = response.data?.list ?? [];
       const totalPages: number = response.data?.totalPagess ?? 1;
