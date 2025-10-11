@@ -278,6 +278,25 @@ function TaskDetailsPage() {
 
         <div className="mt-8">
           <p className="font-medium text-gray-800 mb-2">Comments</p>
+
+            <div className="mt-4 flex gap-2">
+            <input
+              type="text"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="flex-1 border border-gray-300 rounded px-3 py-2"
+              disabled={commentSubmitting}
+            />
+            <button
+              onClick={handleAddComment}
+              disabled={commentSubmitting || !newComment.trim()}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {commentSubmitting ? 'Adding...' : 'Add'}
+            </button>
+          </div>
+
           {comments.length > 0 ? (
             <ul className="space-y-2">
               {comments.map((comment) => (
@@ -295,24 +314,6 @@ function TaskDetailsPage() {
           ) : (
             <p className="text-gray-500 italic">No comments yet</p>
           )}
-
-          <div className="mt-4 flex gap-2">
-            <input
-              type="text"
-              placeholder="Write a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="flex-1 border border-gray-300 rounded px-3 py-2"
-              disabled={commentSubmitting}
-            />
-            <button
-              onClick={handleAddComment}
-              disabled={commentSubmitting || !newComment.trim()}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-            >
-              {commentSubmitting ? 'Adding...' : 'Add'}
-            </button>
-          </div>
         </div>
       </div>
     </div>
