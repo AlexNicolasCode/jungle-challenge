@@ -1,10 +1,20 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { createRootRoute, Link, Outlet, useNavigate } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { useEffect } from 'react';
+
 import { useAuth, useNotification } from '../hooks';
 
 const RootLayout = () => {
-  const { isAuthenticated } = useAuth();
-  const { renderNotifications } = useNotification();
+    const { isAuthenticated } = useAuth();
+    const { renderNotifications } = useNotification();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate({ to: '/login' });
+            return
+        }
+    }, [isAuthenticated])
 
   const renderAuthenticatedTopBar = () => {
     return (

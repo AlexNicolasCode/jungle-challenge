@@ -6,7 +6,7 @@ import { AuthContext } from './auth.context';
 import { AuthProviderProps, Tokens } from './auth.types';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [tokens, setTokens] = useState<Tokens | null>(JSON.parse(localStorage.getItem('tokens')) ?? {});
+  const [tokens, setTokens] = useState<Tokens | null>(JSON.parse(localStorage.getItem('tokens')));
   const [loading, setLoading] = useState(false);
 
   const isAuthenticated = useMemo(() => !!tokens, [tokens]);
