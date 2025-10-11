@@ -12,7 +12,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(1);
   const [commentsPage, setCommentPage] = useState<number>(1);
-  const [maxCommentPage, setMaxCommentPage] = useState<number>(1);
   const [tasks, setTasks] = useState<TaskEntity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
