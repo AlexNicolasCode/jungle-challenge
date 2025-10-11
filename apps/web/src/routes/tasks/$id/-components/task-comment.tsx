@@ -1,22 +1,47 @@
-import React from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
-import { CommentEntity } from '../../../../shared/types';
+import { useTasks } from '../../../../hooks';
+import { CommentEntity, TaskEntity } from '../../../../shared/types';
 
 interface TaskCommentsProps {
-  comments: CommentEntity[];
-  newComment: string;
-  setNewComment: (value: string) => void;
-  handleAddComment: () => void;
-  commentSubmitting: boolean;
+  task: TaskEntity,
 }
 
-export const TaskComments: React.FC<TaskCommentsProps> = ({
-  comments,
-  newComment,
-  setNewComment,
-  handleAddComment,
-  commentSubmitting,
+const TaskCommentsComponent: React.FC<TaskCommentsProps> = ({
+    task,
 }) => {
+    const { createCommentByTaskId, loadCommentsByTaskId } = useTasks();
+    const [newComment, setNewComment] = useState<string>('');
+    const [comments, setComments] = useState<CommentEntity[]>([]);
+    const [commentSubmitting, setCommentSubmitting] = useState<boolean>(false);
+
+    useEffect(() => {
+        handleStarts();
+    }, [task.id]);
+
+    const handleStarts = async () => {
+        if (!task || !task.id) {
+            return;
+        }
+        const comments = await loadCommentsByTaskId(task.id);
+        setComments(comments);
+    }
+
+    const handleAddComment = async () => {
+        if (!newComment.trim() || !task) return;
+        try {
+            setCommentSubmitting(true);
+            await createCommentByTaskId({ taskId: task.id, content: newComment });
+            const fetchedComments = await loadCommentsByTaskId(task.id);
+            setComments(fetchedComments);
+            setNewComment('');
+        } catch (err) {
+            alert(err.message || 'Failed to add comment');
+        } finally {
+            setCommentSubmitting(false);
+        }
+    };
+
   return (
     <div className="mt-8">
       <p className="font-medium text-gray-800 mb-2">Comments</p>
@@ -54,3 +79,5 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({
     </div>
   );
 };
+
+export const TaskComments = memo(TaskCommentsComponent);

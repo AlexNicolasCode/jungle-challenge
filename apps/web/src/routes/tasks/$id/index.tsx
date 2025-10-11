@@ -6,7 +6,7 @@ import z from 'zod';
 
 import { useLoading, useTasks } from '../../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../shared/enums';
-import { CommentEntity, TaskEntity } from '../../../shared/types';
+import { TaskEntity } from '../../../shared/types';
 import { TaskComments, TaskDetails, TaskEditMode } from './-components';
 
 const editTaskSchema = z.object({
@@ -23,17 +23,14 @@ export const Route = createFileRoute('/tasks/$id/')({
 export function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id/' });
   const { loading: globalLoading, renderLoading } = useLoading();
-  const { loadTaskById, updateTask, loadCommentsByTaskId, createCommentByTaskId } = useTasks();
+  const { loadTaskById, updateTask } = useTasks();
   const navigate = useNavigate();
 
   const [task, setTask] = useState<TaskEntity | undefined>();
-  const [comments, setComments] = useState<CommentEntity[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | undefined>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
-  const [newComment, setNewComment] = useState('');
-  const [commentSubmitting, setCommentSubmitting] = useState(false);
 
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(editTaskSchema),
@@ -49,9 +46,7 @@ export function TaskDetailsPage() {
           navigate({ to: '/' });
           return;
         }
-        const fetchedComments = await loadCommentsByTaskId(id);
         setTask(fetchedTask);
-        setComments(fetchedComments || []);
         reset({
           title: fetchedTask.title,
           priority: fetchedTask.priority,
@@ -89,21 +84,6 @@ export function TaskDetailsPage() {
     }
   };
 
-  const handleAddComment = async () => {
-    if (!newComment.trim() || !task) return;
-    try {
-      setCommentSubmitting(true);
-      await createCommentByTaskId({ taskId: task.id, content: newComment });
-      const fetchedComments = await loadCommentsByTaskId(id);
-      setComments(fetchedComments);
-      setNewComment('');
-    } catch (err) {
-      alert(err.message || 'Failed to add comment');
-    } finally {
-      setCommentSubmitting(false);
-    }
-  };
-
   if (loading || globalLoading) return renderLoading('Loading task details...');
   if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
   if (!task) return <div className="p-6 text-gray-600">Task not found.</div>;
@@ -126,16 +106,8 @@ export function TaskDetailsPage() {
           taskTitle={task.title}
           setIsEditMode={setIsEditMode}
         />
-
         <TaskDetails task={task} />
-
-        <TaskComments
-          comments={comments}
-          newComment={newComment}
-          setNewComment={setNewComment}
-          handleAddComment={handleAddComment}
-          commentSubmitting={commentSubmitting}
-        />
+        <TaskComments task={task} />
       </div>
     </div>
   );
