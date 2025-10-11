@@ -2,11 +2,15 @@ import { Module } from '@nestjs/common';
 
 import { HandleTasksQueueController } from './handle-tasks-queue.controller';
 import { SendNotificationToClientService } from './services';
-import { NotifyTaskUpdateUseCase } from './usecases';
+import { NotifyTaskCreatedUseCase, NotifyTaskUpdateUseCase } from './usecases';
 
 @Module({
   imports: [],
   controllers: [HandleTasksQueueController],
-  providers: [NotifyTaskUpdateUseCase, SendNotificationToClientService],
+  providers: [
+    NotifyTaskUpdateUseCase,
+    NotifyTaskCreatedUseCase,
+    SendNotificationToClientService,
+  ],
 })
 export class NotificationModule {}

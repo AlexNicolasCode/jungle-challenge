@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
 import { AxiosResponse } from 'axios';
+import { useEffect, useMemo, useState } from 'react';
 
-import { AuthProviderProps, Tokens } from './auth.types';
-import { AuthContext } from './auth.context';
 import { authApiClient } from '../../clients/auth';
+import { AuthContext } from './auth.context';
+import { AuthProviderProps, Tokens } from './auth.types';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [tokens, setTokens] = useState<Tokens | null>(null);
+  const [tokens, setTokens] = useState<Tokens | null>(JSON.parse(localStorage.getItem('tokens')) ?? {});
   const [loading, setLoading] = useState(false);
 
   const isAuthenticated = useMemo(() => !!tokens, [tokens]);
