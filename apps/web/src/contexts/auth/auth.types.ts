@@ -15,6 +15,7 @@ export interface AuthContextType {
   registerUser: (data: { name: string; email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
   logout: () => void;
   refreshToken: () => Promise<{ success: boolean; error?: any }>;
+  loadTokens: () => Tokens;
 }
 
 export type AuthProviderProps = {

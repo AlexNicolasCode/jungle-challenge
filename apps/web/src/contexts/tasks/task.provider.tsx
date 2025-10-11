@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
 
-import { TasksContext } from './task.context';
-import { TaskProviderProps } from './task.types';
 import { taskApiClient } from '../../clients/tasks';
 import { useAuth } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
 import { TaskEntity, UserEntity } from '../../shared/types';
+import { TasksContext } from './task.context';
+import { TaskProviderProps } from './task.types';
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
-  const { refreshToken } = useAuth();
+  const { loadTokens, refreshToken } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(1);
   const [tasks, setTasks] = useState<TaskEntity[]>([]);
@@ -64,6 +64,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         params: {
           page: page,
           size: 10,
+        },
+        headers: {
+            Authorization: `Bearer ${loadTokens().accessToken}`
         }
       });
       const tasks: TaskEntity[] = response.data?.list ?? [];
@@ -95,13 +98,13 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.get<TaskEntity>(`${taskId}`);
-      setError(undefined);
-      return response.data;
+        const response = await taskApiClient.get<TaskEntity>(`${taskId}`);
+        setError(undefined);
+        return response.data;
     } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
+        retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 

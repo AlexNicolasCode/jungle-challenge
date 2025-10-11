@@ -55,8 +55,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+    const loadTokens = (): Tokens | void => {
+        const storagedTokens = localStorage.getItem('tokens');
+        if (!storagedTokens) {
+            return;
+        }
+        return JSON.parse(storagedTokens) as Tokens;
+    }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, tokens, loading, login, registerUser, logout, refreshToken }}>
+    <AuthContext.Provider value={{ isAuthenticated, tokens, loading, login, registerUser, logout, refreshToken, loadTokens }}>
       {children}
     </AuthContext.Provider>
   );
