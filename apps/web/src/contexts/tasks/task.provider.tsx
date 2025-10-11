@@ -1,14 +1,12 @@
 import React, { useCallback, useState } from 'react';
 
 import { taskApiClient } from '../../clients/tasks';
-import { useAuth } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
 import { CommentEntity, TaskEntity, UserEntity } from '../../shared/types';
 import { TasksContext } from './task.context';
 import { TaskProviderProps } from './task.types';
 
 export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
-  const { loadTokens, refreshToken } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(1);
   const [commentsPage, setCommentPage] = useState<number>(1);
@@ -42,19 +40,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     });
   }, [tasks]);
 
-  const retry = async (statusCode: number, callback: () => void) => {
-    const isAuthenticatedError = statusCode === 401;
-    if (!isAuthenticatedError) {
-      return;
-    }
-    const { success } = await refreshToken();
-    if (!success) {
-      setError('Internal Error');
-      return;
-    }
-    return callback();
-  }
-
   const loadTasks = useCallback(async () => {
     if (loading) {
       return;
@@ -72,8 +57,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       setMaxPage(totalPages);
       setTasks(tasks);
       setError(undefined);
-    } catch (err: any) {
-      retry(err.response?.data?.statusCode, loadTasks);
+    } catch (err) {
     } finally {
       setLoading(false);
     }
@@ -99,8 +83,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         const response = await taskApiClient.get<TaskEntity>(`${taskId}`);
         setError(undefined);
         return response.data;
-    } catch (err: any) {
-        retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
+    } catch (err) {
     } finally {
         setLoading(false);
     }
@@ -123,8 +106,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         setCommentPage(totalPages);
         setError(undefined);
         return comments;
-    } catch (err: any) {
-        retry(err.response?.data?.statusCode, () => loadTaskById(taskId));
+    } catch (err) {
+        console.error(err);
     } finally {
         setLoading(false);
     }
@@ -155,8 +138,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       const taskId: string = response.data.id;
       setTasks((prev) => [...prev, { id: taskId, ...task }]);
       setError(undefined);
-    } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => createTask(task));
+    } catch (err) {
     } finally {
       setLoading(false);
     }
@@ -174,8 +156,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         content,
       });
       setError(undefined);
-    } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => createTask(task));
+    } catch (err) {
     }
   };
 
@@ -207,8 +188,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         }))
       );
       setError(undefined);
-    } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => updateTask(taskId, data));
+    } catch (err) {
     } finally {
       setLoading(false);
     }
@@ -223,8 +203,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       await taskApiClient.delete(`${taskId}`);
       setTasks((prev) => prev.filter((task) => task.id !== taskId));
       setError(undefined);
-    } catch (err: any) {
-      retry(err.response?.data?.statusCode, () => deleteTask(taskId));
+    } catch (err) {
     } finally {
       setLoading(false);
     }

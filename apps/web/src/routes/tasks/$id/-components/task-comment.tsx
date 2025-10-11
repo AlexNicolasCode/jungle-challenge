@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import { useTasks } from '../../../../hooks';
+import { taskApiClient } from '../../../../clients/tasks';
 import { CommentEntity, TaskEntity } from '../../../../shared/types';
 
 interface TaskCommentsProps {
@@ -10,35 +10,67 @@ interface TaskCommentsProps {
 const TaskCommentsComponent: React.FC<TaskCommentsProps> = ({
     task,
 }) => {
-    const { createCommentByTaskId, loadCommentsByTaskId } = useTasks();
     const [newComment, setNewComment] = useState<string>('');
     const [comments, setComments] = useState<CommentEntity[]>([]);
+    const [commentsPage, setCommentPage] = useState<number>(1);
     const [commentSubmitting, setCommentSubmitting] = useState<boolean>(false);
 
     useEffect(() => {
+        const handleStarts = async () => {
+            const hasComments = comments.length > 0;
+            if (!task || !task.id || hasComments) {
+                return;
+            }
+            await loadCommentsByTaskId(task.id);
+        }
         handleStarts();
     }, [task.id]);
 
-    const handleStarts = async () => {
-        if (!task || !task.id) {
-            return;
+    const loadCommentsByTaskId = async (taskId: string) => {
+        try {
+            const response = await taskApiClient.get(`${taskId}/comments`, {
+                params: {
+                    page: commentsPage,
+                    size: 10,
+                },
+            });
+            const updatedComments: CommentEntity[] = response.data?.list ?? [];
+            const totalPages: number = response.data?.totalPagess ?? 1;
+            setComments(updatedComments);
+            setCommentPage(totalPages);
+        } catch (err) {
+            console.error(err);
         }
-        const comments = await loadCommentsByTaskId(task.id);
-        setComments(comments);
-    }
+    };
 
     const handleAddComment = async () => {
         if (!newComment.trim() || !task) return;
         try {
+            console.log(newComment);
             setCommentSubmitting(true);
             await createCommentByTaskId({ taskId: task.id, content: newComment });
-            const fetchedComments = await loadCommentsByTaskId(task.id);
-            setComments(fetchedComments);
+            await loadCommentsByTaskId(task.id);
             setNewComment('');
         } catch (err) {
             alert(err.message || 'Failed to add comment');
         } finally {
             setCommentSubmitting(false);
+        }
+    };
+
+    const createCommentByTaskId = async ({
+        taskId,
+        content,
+    }: {
+        taskId: string;
+        content: string;
+    }) => {
+        try {
+            await taskApiClient.post<void>(`${taskId}/comments`, {
+                content,
+            });
+        } catch (err) {
+            console.error(err);
         }
     };
 
