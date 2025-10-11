@@ -23,8 +23,8 @@ type EditTaskForm = z.infer<typeof editTaskSchema>;
 function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id' });
   const { loading: globalLoading, renderLoading } = useLoading();
-  const navigate = useNavigate();
   const { loadTaskById, updateTask, loadCommentsByTaskId, createCommentByTaskId } = useTasks();
+  const navigate = useNavigate();
 
   const [task, setTask] = useState<TaskEntity | null>(null);
   const [comments, setComments] = useState<CommentEntity[]>([]);
@@ -51,7 +51,7 @@ function TaskDetailsPage() {
         setLoading(true);
         const fetchedTask = await loadTaskById(id);
         if (!fetchedTask) {
-          alert('Task not found');
+          navigate({ to: '/' });
           return;
         }
         const fetchedComments = await loadCommentsByTaskId(id);
