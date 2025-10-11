@@ -12,9 +12,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isAuthenticated = useMemo(() => !!tokens, [tokens]);
 
   useEffect(() => {
-    const storedTokens = localStorage.getItem('tokens');
-    if (storedTokens) setTokens(JSON.parse(storedTokens));
-    setLoading(false);
+    refreshToken();
   }, []);
 
   const registerUser = async (data: { name: string; email: string; password: string }) => {
