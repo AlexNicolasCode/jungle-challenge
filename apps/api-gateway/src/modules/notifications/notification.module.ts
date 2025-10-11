@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-import { AuthController } from './auth.controller';
+import { NotificationGateway } from './notification.gateway';
 
 @Module({
   imports: [
@@ -13,7 +13,6 @@ import { AuthController } from './auth.controller';
       },
     ]),
   ],
-  controllers: [AuthController],
-  providers: [],
+  providers: [NotificationGateway],
 })
-export class AuthModule {}
+export class NotificationModule {}

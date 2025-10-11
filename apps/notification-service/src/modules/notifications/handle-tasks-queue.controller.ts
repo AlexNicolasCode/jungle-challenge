@@ -2,8 +2,8 @@ import { Controller } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 
 import {
-  type NotifyTaskUpdateInputDto,
-  NotifyTaskUpdateUseCase,
+    type NotifyTaskUpdateInputDto,
+    NotifyTaskUpdateUseCase,
 } from './usecases';
 
 @Controller()
@@ -13,9 +13,7 @@ export class HandleTasksQueueController {
   ) {}
 
   @EventPattern('task.updated')
-  async handleTaskUpdateNotification(
-    dto: NotifyTaskUpdateInputDto,
-  ): Promise<void> {
-    await this.notifyTaskUpdateUseCase.notifyTaskUpdated(dto);
+  handleTaskUpdateNotification(dto: NotifyTaskUpdateInputDto): void {
+    this.notifyTaskUpdateUseCase.notifyTaskUpdated(dto);
   }
 }

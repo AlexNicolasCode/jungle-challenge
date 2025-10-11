@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { AuthModule, TaskModule } from './modules';
+import { AuthModule, TaskModule, NotificationModule } from './modules';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
@@ -9,6 +9,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ConfigModule.forRoot(),
     AuthModule,
     TaskModule,
+    NotificationModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

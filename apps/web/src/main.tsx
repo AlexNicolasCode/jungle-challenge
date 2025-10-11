@@ -1,9 +1,9 @@
+import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
 
+import { AuthProvider, LoadingProvider, NotificationProvider, TaskProvider } from './contexts'
 import { routeTree } from './routeTree.gen'
-import { AuthProvider, LoadingProvider, TaskProvider } from './contexts'
 
 import './global.css'
 
@@ -23,7 +23,9 @@ if (!rootElement.innerHTML) {
       <AuthProvider>
         <TaskProvider>
           <LoadingProvider>
-            <RouterProvider router={router} />
+            <NotificationProvider>
+                <RouterProvider router={router} />
+            </NotificationProvider>
           </LoadingProvider>
         </TaskProvider>
       </AuthProvider>

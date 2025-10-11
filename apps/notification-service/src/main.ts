@@ -1,7 +1,7 @@
-import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { Transport } from '@nestjs/microservices';
+import { NestFactory } from '@nestjs/core';
 
+import { Transport } from '@nestjs/microservices';
 import { AppModule } from './app.module';
 
 async function bootstrap() {

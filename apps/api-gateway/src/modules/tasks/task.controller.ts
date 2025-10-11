@@ -1,41 +1,41 @@
 import {
-  Controller,
-  Post,
-  Body,
-  Inject,
-  HttpCode,
-  HttpStatus,
-  Delete,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Put,
-  Query,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    HttpStatus,
+    Inject,
+    Param,
+    ParseUUIDPipe,
+    Post,
+    Put,
+    Query,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
 import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiParam,
-  ApiQuery,
+    ApiBody,
+    ApiOperation,
+    ApiParam,
+    ApiQuery,
+    ApiResponse,
+    ApiTags,
 } from '@nestjs/swagger';
+import { Observable } from 'rxjs';
 
-import {
-  CreateTaskInputDto,
-  CreateTaskOutputDto,
-  DeleteTaskByIdInputDto,
-  DeleteTaskByIdOutputDto,
-  LoadTaskByIdInputDto,
-  LoadTaskByIdOutputDto,
-  LoadTasksInputDto,
-  LoadTasksOutputDto,
-  UpdateTaskByIdInputDto,
-  UpdateTaskByIdOutputDto,
-} from './dtos';
 import { LoggedUser, LoggedUserOutputDto } from 'src/shared/decorators';
+import {
+    CreateTaskInputDto,
+    CreateTaskOutputDto,
+    DeleteTaskByIdInputDto,
+    DeleteTaskByIdOutputDto,
+    LoadTaskByIdInputDto,
+    LoadTaskByIdOutputDto,
+    LoadTasksInputDto,
+    LoadTasksOutputDto,
+    UpdateTaskByIdInputDto,
+    UpdateTaskByIdOutputDto,
+} from './dtos';
 
 @ApiTags('Tasks')
 @Controller('api/tasks')

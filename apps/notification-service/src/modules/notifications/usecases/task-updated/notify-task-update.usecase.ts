@@ -1,23 +1,26 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
+import { SendNotificationToClientService } from '../../services';
 import { NotifyTaskUpdateInputDto } from './notify-task-update.input.dto';
 
 @Injectable()
 export class NotifyTaskUpdateUseCase {
   private readonly logger = new Logger(NotifyTaskUpdateUseCase.name);
 
-  constructor() {}
+  constructor(
+    private readonly sendNotificationToClientService: SendNotificationToClientService,
+  ) {}
 
-  async notifyTaskUpdated(dto: NotifyTaskUpdateInputDto): Promise<void> {
+  notifyTaskUpdated(dto: NotifyTaskUpdateInputDto): void {
     try {
-      console.log(dto);
+      this.sendNotificationToClientService.sendNotificationToClient({
+        userId: dto.authorId,
+        taskId: dto.taskId,
+        taskTitle: dto.taskTitle,
+        type: 'TASK_UPDATED',
+      });
     } catch (error) {
       this.logger.error(error);
-      throw new InternalServerErrorException();
     }
   }
 }

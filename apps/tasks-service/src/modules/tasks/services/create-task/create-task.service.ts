@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 
 import { TaskRepository } from 'src/database/repositories';

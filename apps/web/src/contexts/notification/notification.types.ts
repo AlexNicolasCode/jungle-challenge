@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 
 export type NotificationType = {
   type: NotificationTypeEnum;
+  taskId: string;
   taskTitle: string;
 }
 
@@ -12,7 +13,7 @@ export enum NotificationTypeEnum {
 }
 
 export interface NotificationContextType {
-  rendenNotifications: () => void;
+  renderNotifications: () => void;
 }
 
 export type NotificationProviderProps = {

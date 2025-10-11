@@ -4,5 +4,6 @@ import { NotificationModule } from './modules/notifications/notification.module'
 
 @Module({
   imports: [NotificationModule],
+  providers: [],
 })
 export class AppModule {}
