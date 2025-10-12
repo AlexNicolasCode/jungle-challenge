@@ -4,15 +4,15 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
-import { useLoading, useTasks } from '../../../hooks';
+import { useTasks } from '../../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../shared/enums';
 import { TaskEntity } from '../../../shared/types';
 import { TaskComments, TaskDetails, TaskEditMode } from './-components';
 
 const editTaskSchema = z.object({
-    title: z.string().min(3, 'Title is required'),
-    priority: z.enum(TaskPriorityEnum),
-    status: z.enum(TaskStatusEnum),
+  title: z.string().min(3, 'Title is required'),
+  priority: z.enum(TaskPriorityEnum),
+  status: z.enum(TaskStatusEnum),
 });
 type EditTaskForm = z.infer<typeof editTaskSchema>;
 
@@ -22,12 +22,11 @@ export const Route = createFileRoute('/tasks/$id/')({
 
 export function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id/' });
-  const { loading: globalLoading, renderLoading } = useLoading();
   const { loadTaskById, updateTask } = useTasks();
   const navigate = useNavigate();
 
   const [task, setTask] = useState<TaskEntity | undefined>();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -38,9 +37,7 @@ export function TaskDetailsPage() {
 
   useEffect(() => {
     const fetchTask = async () => {
-      if (loading) return;
       try {
-        setLoading(true);
         const fetchedTask = await loadTaskById(id);
         if (!fetchedTask) {
           navigate({ to: '/' });
@@ -84,13 +81,43 @@ export function TaskDetailsPage() {
     }
   };
 
-  if (loading || globalLoading) return renderLoading('Loading task details...');
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 p-6 animate-pulse">
+        <button
+            onClick={() => navigate({ to: '/' })}
+            className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black"
+        >
+            ← Back to Tasks
+        </button>
+        <div className="bg-white rounded-2xl shadow p-6">
+          <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+          <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="h-20 bg-gray-200 rounded"></div>
+            <div className="h-20 bg-gray-200 rounded"></div>
+          </div>
+          <div className="h-6 bg-gray-200 rounded w-1/4 mt-8 mb-4"></div>
+          <div className="space-y-3">
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+            <div className="h-10 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
   if (!task) return <div className="p-6 text-gray-600">Task not found.</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <button onClick={() => navigate({ to: '/' })} className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black">
+      <button
+        onClick={() => navigate({ to: '/' })}
+        className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black"
+      >
         ← Back to Tasks
       </button>
 
