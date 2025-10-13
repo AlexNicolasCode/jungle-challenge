@@ -1,25 +1,17 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
-  IsDateString,
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsUUID,
+    IsDateString,
+    IsEnum,
+    IsOptional,
+    IsString,
+    IsUUID,
 } from 'class-validator';
-import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { PaginationInput } from 'src/shared/dtos';
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
 export class LoadTasksInputDto extends PaginationInput {
-  @ApiPropertyOptional({
-    description: 'Filter by task title',
-    example: 'Finish NestJS API',
-  })
-  @IsString()
-  @IsOptional()
-  title?: string;
-
   @ApiPropertyOptional({
     description: 'Filter by task description',
     example: 'Build REST and GraphQL endpoints',
@@ -54,6 +46,14 @@ export class LoadTasksInputDto extends PaginationInput {
   @IsEnum(TaskStatusEnum)
   @IsOptional()
   status?: TaskStatusEnum;
+
+  @ApiPropertyOptional({
+    description: 'Filter by task title',
+    example: 'Update system',
+  })
+  @IsString()
+  @IsOptional()
+  search?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by user IDs',

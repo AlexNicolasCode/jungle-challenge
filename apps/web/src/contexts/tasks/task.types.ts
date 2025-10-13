@@ -7,7 +7,7 @@ export interface TasksContextType {
   tasks: TaskEntity[];
   loading: boolean;
   error?: string;
-  loadTasks: () => Promise<void>;
+  loadTasks: (query: { priority?: TaskPriorityEnum; status?: TaskStatusEnum }) => Promise<void>;
   handleNextPage: () => void;
   loadTaskById: (taskId: string) => Promise<TaskEntity | undefined>;
   createTask: (data: {

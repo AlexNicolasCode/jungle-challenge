@@ -1,14 +1,14 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 
+import { TaskEntity } from 'src/database/entities';
 import { TaskRepository } from 'src/database/repositories';
+import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 import { LoadTasksInputDto } from './load-tasks.input.dto';
 import { LoadTasksOutputDto } from './load-tasks.output.dto';
-import { TaskEntity } from 'src/database/entities';
-import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
 @Injectable()
 export class LoadTasksService {
@@ -22,10 +22,10 @@ export class LoadTasksService {
         page: dto.page,
         size: dto.size,
         where: {
-          title: dto.title,
           deadline: dto.deadline,
           priority: dto.priority,
           status: dto.status,
+          search: dto.search,
           usersIds: dto.usersIds,
         },
       });

@@ -1,20 +1,16 @@
 import {
-  IsOptional,
-  IsString,
-  IsDateString,
-  IsEnum,
-  IsArray,
-  ArrayNotEmpty,
-  IsUUID,
+    ArrayNotEmpty,
+    IsArray,
+    IsDateString,
+    IsEnum,
+    IsOptional,
+    IsString,
+    IsUUID,
 } from 'class-validator';
 import { PaginationInput } from 'src/shared/dtos';
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
 export class LoadTasksInputDto extends PaginationInput {
-  @IsOptional()
-  @IsString()
-  title?: string;
-
   @IsOptional()
   @IsDateString()
   deadline?: Date;
@@ -26,6 +22,10 @@ export class LoadTasksInputDto extends PaginationInput {
   @IsOptional()
   @IsEnum(TaskStatusEnum)
   status?: TaskStatusEnum;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 
   @IsOptional()
   @IsArray()

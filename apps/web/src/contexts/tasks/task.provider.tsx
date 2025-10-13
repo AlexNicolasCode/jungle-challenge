@@ -12,6 +12,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [commentsPage, setCommentPage] = useState<number>(1);
   const [tasks, setTasks] = useState<TaskEntity[]>([]);
   const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState<{ priority?: TaskPriorityEnum; status?: TaskStatusEnum; search?: string }>({});
   const [error, setError] = useState<string | undefined>();
 
   const sortedTasks = React.useMemo(() => {
@@ -40,28 +41,48 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     });
   }, [tasks]);
 
-  const loadTasks = useCallback(async () => {
+  const loadTasks = useCallback(async (newQuery: { priority?: TaskPriorityEnum; status?: TaskStatusEnum; search?: string }) => {
     if (loading) {
       return;
     }
     setLoading(true);
     try {
+        updateWindowUrlParams(newQuery);
+        const pageParam = newQuery == query ? page : 1;
       const response = await taskApiClient.get('', {
         params: {
-          page: page,
+          page: pageParam,
           size: 10,
+          ...newQuery,
         },
       });
       const tasks: TaskEntity[] = response.data?.list ?? [];
       const totalPages: number = response.data?.totalPagess ?? 1;
+      setQuery(query);
       setMaxPage(totalPages);
       setTasks(tasks);
       setError(undefined);
-    } catch (err) {
+    } catch (error) {
+        console.log(error);
     } finally {
       setLoading(false);
     }
   }, [page]);
+
+  const updateWindowUrlParams = (newQuery: Record<string, string>) => {
+        const url = new URL(window.location.href);
+        const keys = Object.keys(newQuery);
+        for (const key of keys) {
+            const value = newQuery[key];
+            if (!value || value === '') {
+
+                url.searchParams.delete(key, value);
+                continue;
+            }
+            url.searchParams.set(key, value);
+        }
+        window.history.pushState({}, '', url.toString());
+  }
 
   const handleNextPage = () => {
     const nextPage = page+1;

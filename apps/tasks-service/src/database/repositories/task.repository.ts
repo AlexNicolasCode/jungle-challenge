@@ -96,10 +96,10 @@ export class TaskRepository {
     page: number;
     size: number;
     where: {
-      title?: string;
       deadline?: Date;
       priority?: TaskPriorityEnum;
       status?: TaskStatusEnum;
+      search?: string;
       usersIds?: string[];
     };
   }): Promise<{ tasks: TaskEntity[]; count: number }> {
@@ -118,9 +118,9 @@ export class TaskRepository {
       string,
       { query: string; variables: Record<string, any> }
     > = {
-      title: {
-        query: 'task.title ILIKE :title',
-        variables: { title: `%${where.title}%` },
+      search: {
+        query: 'task.title ILIKE :search',
+        variables: { search: `%${where.search}%` },
       },
       deadline: {
         query: 'task.deadline = :deadline',
