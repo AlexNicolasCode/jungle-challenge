@@ -9,7 +9,12 @@ import { NotificationGateway } from './notification.gateway';
       {
         name: 'AUTH_SERVICE',
         transport: Transport.TCP,
-        options: { host: '127.0.0.1', port: 3001 },
+        options: {
+          host: '127.0.0.1',
+          port: 3001,
+          retryAttempts: 10,
+          retryDelay: 3000,
+        },
       },
     ]),
   ],
