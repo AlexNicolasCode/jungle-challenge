@@ -22,19 +22,21 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
         const hasComments = comments.length > 0;
         if (!task || !task.id || hasComments) return;
         await loadCommentsByTaskId(task.id);
-        connectCommentsWebsocket();
     };
     handleStarts();
   }, []);
 
-  const connectCommentsWebsocket = () => {
-        const socket = io('http://localhost:3000/notifications', {
+  useEffect(() => {
+   const socket = io('http://localhost:3000/notifications', {
             extraHeaders: {
                 authorization: `Bearer ${tokens?.accessToken}`,
             }
         });
-        socket.on(`tasks/${task.id}/comments`, addComment);
-  }
+    socket.on(`tasks/${task.id}/comments`, addComment);
+    return () => {
+        socket.close();
+    }
+  }, [tokens]);
 
   const addComment = (comment: CommentEntity) => {
     setComments(prev => [comment, ...prev]);

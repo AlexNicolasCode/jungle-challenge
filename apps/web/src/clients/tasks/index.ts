@@ -38,6 +38,12 @@ taskApiClient.interceptors.response.use(
                 ...response.data,
                 refreshToken,
             }))
+            window.dispatchEvent(new CustomEvent('storage', {
+                detail: {
+                    ...response.data,
+                    refreshToken,
+                }
+            }));
             error.config.headers.Authorization = `Bearer ${accessToken}`;
             return taskApiClient(error.config);
         },

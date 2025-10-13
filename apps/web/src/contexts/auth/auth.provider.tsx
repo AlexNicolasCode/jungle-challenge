@@ -1,14 +1,24 @@
 import { AxiosResponse } from 'axios';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { authApiClient } from '../../clients/auth';
 import { AuthContext } from './auth.context';
 import { AuthProviderProps, Tokens } from './auth.types';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [tokens, setTokens] = useState<Tokens | null>(JSON.parse(localStorage.getItem('tokens')));
+  const [tokens, setTokens] = useState<Tokens | undefined>(JSON.parse(localStorage.getItem('tokens')));
 
   const isAuthenticated = useMemo(() => !!tokens, [tokens]);
+
+  useEffect(() => {
+    function handleStorageChange(event: CustomEvent) {
+        setTokens(event.detail);
+    };
+    window.addEventListener('storage', handleStorageChange as EventListener);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange as EventListener);
+    };
+  }, [])
 
   const registerUser = async (data: { name: string; email: string; password: string }) => {
     try {

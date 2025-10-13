@@ -8,7 +8,7 @@ import { NotificationProviderProps, NotificationType } from './notification.type
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
     const { tokens } = useAuth();
-  const [notifications, setNotifications] = useState<NotificationType[]>([]);
+  const [notification, setNotification] = useState<NotificationType | null>(null);
 
   useEffect(() => {
     const socket = io('http://localhost:3000/notifications', {
@@ -16,22 +16,31 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
             authorization: `Bearer ${tokens?.accessToken}`,
         }
     });
-    socket.on('notifications', (notification: NotificationType) => {
-      addNotification(notification);
+    socket.on('notifications', (newNotification: NotificationType) => {
+      addNotification(newNotification);
     });
-  }, [])
 
-  const addNotification = ({ type, taskId, taskTitle }: NotificationType) => {
-    setNotifications(prev => [...prev, { type, taskId, taskTitle }]);
-  };
+    return () => {
+        socket.close();
+    }
+  }, [tokens])
+
+  const addNotification = (newNotification: NotificationType) => {
+    if (notification?.taskId === newNotification.taskId) {
+        return;
+    }
+    setNotification(newNotification);
+    setTimeout(() => {
+        setNotification(null);
+    }, 3000);
+  }
 
   const renderNotifications = useCallback(() => {
-    const lastNotification = notifications[notifications.length - 1];
-    if (!lastNotification) {
-      return;
+    if (!notification) {
+        return;
     }
-    return <ToastNotification taskId={lastNotification.taskId} type={lastNotification.type} taskTitle={lastNotification.taskTitle} />
-  }, [notifications])
+    return <ToastNotification taskId={notification.taskId} type={notification.type} taskTitle={notification.taskTitle} />
+  }, [notification])
 
   return (
     <NotificationContext.Provider
