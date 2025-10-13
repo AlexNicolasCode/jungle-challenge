@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React from 'react';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../../shared/enums';
 
@@ -50,22 +51,19 @@ export const TaskEditMode: React.FC<TaskEditModeProps> = ({
                   <option key={status} value={status}>{status.replace('_', ' ')}</option>
                 ))}
               </select>
-              <button
+              <Button
                 type="submit"
                 disabled={isSubmitting || updating}
-                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
               >
                 Save
-              </button>
+              </Button>
             </>
           ) : (
-            <button
-              type="button"
+            <Button
               onClick={() => setIsEditMode(true)}
-              className="text-gray-500 hover:text-gray-700 text-sm font-medium"
             >
               Edit
-            </button>
+            </Button>
           )}
         </div>
       </div>

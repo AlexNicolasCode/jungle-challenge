@@ -1,9 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createFileRoute } from '@tanstack/react-router';
-import { useNavigate } from '@tanstack/react-router';
 
+import { Button } from '@/components/ui/button';
 import { useAuth, useLoading } from '../../hooks';
 
 const registerSchema = z
@@ -111,12 +111,11 @@ function RegisterPage() {
           {errors.confirmPassword && <p className="text-red-500 mt-1 text-sm">{errors.confirmPassword.message}</p>}
         </div>
 
-        <button
+        <Button
           type="submit"
-          className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition"
         >
           Register
-        </button>
+        </Button>
       </form>
     </div>
   );

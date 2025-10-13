@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading, useTasks } from '../hooks';
@@ -167,23 +168,12 @@ function HomePage() {
                 </span>
 
                 <div className="relative">
-                  <button
-                    onClick={() => toggleMenu(task.id)}
+                  <Button
+                    onClick={() => handleViewDetails(task.id)}
                     className="px-3 py-1 text-sm bg-gray-200 rounded hover:bg-gray-300"
                   >
-                    Options
-                  </button>
-
-                  {openMenuId === task.id && (
-                    <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-200 rounded shadow-md z-10">
-                      <button
-                        onClick={() => handleViewDetails(task.id)}
-                        className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100"
-                      >
-                        Details
-                      </button>
-                    </div>
-                  )}
+                    Details
+                  </Button>
                 </div>
               </div>
             </li>

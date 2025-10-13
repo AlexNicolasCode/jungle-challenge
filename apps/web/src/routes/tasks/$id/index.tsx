@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
+import { Button } from '@/components/ui/button';
 import { useTasks } from '../../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../shared/enums';
 import { TaskEntity } from '../../../shared/types';
@@ -84,12 +85,12 @@ export function TaskDetailsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 p-6 animate-pulse">
-        <button
+        <Button
             onClick={() => navigate({ to: '/' })}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black"
+            className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black outline"
         >
             ← Back to Tasks
-        </button>
+        </Button>
         <div className="bg-white rounded-2xl shadow p-6">
           <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
           <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
@@ -111,12 +112,12 @@ export function TaskDetailsPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <button
+      <Button
         onClick={() => navigate({ to: '/' })}
-        className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black"
+        className="mb-4"
       >
         ← Back to Tasks
-      </button>
+      </Button>
 
       <div className="bg-white rounded-2xl shadow p-6">
         <TaskEditMode

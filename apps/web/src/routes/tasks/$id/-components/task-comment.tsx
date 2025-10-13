@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { taskApiClient } from '../../../../clients/tasks';
@@ -119,13 +120,12 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
           className="flex-1 border border-gray-300 rounded px-3 py-2"
           disabled={commentSubmitting}
         />
-        <button
+        <Button
           onClick={handleAddComment}
           disabled={commentSubmitting || !newComment.trim()}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
         >
           {commentSubmitting ? 'Adding...' : 'Add'}
-        </button>
+        </Button>
       </div>
       {comments.length > 0 ? (
         <ul

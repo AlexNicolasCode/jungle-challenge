@@ -1,7 +1,8 @@
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+import { Button } from '@/components/ui/button';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { useAuth, useLoading } from '../../hooks';
 
 const loginSchema = z.object({
@@ -72,12 +73,11 @@ function LoginPage() {
           />
           {errors.password && <p className="text-red-500 mt-1 text-sm">{errors.password.message}</p>}
         </div>
-        <button
+        <Button
           type="submit"
-          className="w-full bg-blue-500 text-white p-3 rounded hover:bg-blue-600 transition"
         >
           Login
-        </button>
+        </Button>
       </form>
     </div>
   );
