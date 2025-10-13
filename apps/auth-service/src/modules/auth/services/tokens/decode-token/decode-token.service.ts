@@ -1,10 +1,10 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    Logger,
+    UnauthorizedException
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 import { DecodeTokenInputDto } from './decode-token.input.dto';
 import { DecodeTokenOutputDto } from './decode-token.output.dto';
@@ -37,9 +37,8 @@ export class DecodeTokenService {
         refresh: () => this.decodeRefreshToken(token),
       };
       return tokenTypeMapper[type]();
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException();
+    } catch (_error) {
+      throw new UnauthorizedException();
     }
   }
 
@@ -57,9 +56,8 @@ export class DecodeTokenService {
         iat: decodedToken.iat,
         exp: decodedToken.exp,
       };
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException();
+    } catch (_error) {
+      throw new UnauthorizedException();
     }
   }
 
@@ -77,9 +75,8 @@ export class DecodeTokenService {
         iat: decodedToken.iat,
         exp: decodedToken.exp,
       };
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException();
+    } catch (_error) {
+      throw new UnauthorizedException();
     }
   }
 }
