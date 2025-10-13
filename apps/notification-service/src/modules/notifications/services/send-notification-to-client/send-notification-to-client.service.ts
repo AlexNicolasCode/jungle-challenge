@@ -19,6 +19,8 @@ export class SendNotificationToClientService
       extraHeaders: {
         'x-api-key': 'test',
       },
+      reconnectionAttempts: 10,
+      reconnectionDelay: 10_000,
     });
 
     this.apiGatewayWs.on('connect', () => {

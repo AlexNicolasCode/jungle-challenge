@@ -17,6 +17,8 @@ export class SendCommentService implements OnModuleInit, OnModuleDestroy {
       extraHeaders: {
         'x-api-key': 'test',
       },
+      reconnectionAttempts: 10,
+      reconnectionDelay: 10_000,
     });
 
     this.apiGatewayWs.on('connect', () => {
