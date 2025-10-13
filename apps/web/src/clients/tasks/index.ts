@@ -26,9 +26,10 @@ taskApiClient.interceptors.response.use(
         },
         async (error) => {
             const statusCode = error.response?.data?.statusCode;
+            const isRetry = error.config.headers.retry;
             const isAuthenticatedError = statusCode === 401;
             const storagedTokens = localStorage.getItem('tokens');
-            if (!isAuthenticatedError || !storagedTokens) {
+            if (!isAuthenticatedError || !storagedTokens || isRetry) {
                 return Promise.reject(error);
             }
             const { refreshToken } = JSON.parse(storagedTokens);
@@ -45,6 +46,7 @@ taskApiClient.interceptors.response.use(
                 }
             }));
             error.config.headers.Authorization = `Bearer ${accessToken}`;
+            error.config.headers.retry = `true`;
             return taskApiClient(error.config);
         },
     );
