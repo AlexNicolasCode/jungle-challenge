@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
-
 import { taskApiClient } from '../../../../clients/tasks';
 import { useAuth } from '../../../../hooks';
 import { CommentEntity, TaskEntity } from '../../../../shared/types';
@@ -13,45 +12,43 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
   const { tokens } = useAuth();
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentEntity[]>([]);
-  const [commentsPage, setCommentPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const [commentSubmitting, setCommentSubmitting] = useState<boolean>(false);
   const [loadingComments, setLoadingComments] = useState<boolean>(false);
+  const observerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleStarts = async () => {
-        const hasComments = comments.length > 0;
-        if (!task || !task.id || hasComments) return;
-        await loadCommentsByTaskId(task.id);
-    };
-    handleStarts();
+    if (task?.id) {
+      loadCommentsByTaskId(task.id, 1);
+    }
+  }, [task?.id]);
+
+  useEffect(() => {
+    if (!task?.id || !tokens?.accessToken) return;
+    const socket = io('http://localhost:3000/notifications', {
+      extraHeaders: { authorization: `Bearer ${tokens.accessToken}` },
+    });
+    socket.on(`tasks/${task.id}/comments`, addComment);
+    return () => socket.close();
+  }, [task?.id, tokens?.accessToken]);
+
+  const addComment = useCallback((comment: CommentEntity) => {
+    setComments((prev) => [comment, ...prev]);
   }, []);
 
-  useEffect(() => {
-   const socket = io('http://localhost:3000/notifications', {
-            extraHeaders: {
-                authorization: `Bearer ${tokens?.accessToken}`,
-            }
-        });
-    socket.on(`tasks/${task.id}/comments`, addComment);
-    return () => {
-        socket.close();
-    }
-  }, [tokens]);
-
-  const addComment = (comment: CommentEntity) => {
-    setComments(prev => [comment, ...prev]);
-  }
-
-  const loadCommentsByTaskId = async (taskId: string) => {
+  const loadCommentsByTaskId = async (taskId: string, pageNumber: number) => {
     try {
       setLoadingComments(true);
       const response = await taskApiClient.get(`${taskId}/comments`, {
-        params: { page: commentsPage, size: 10 },
+        params: { page: pageNumber, size: 10 },
       });
-      const updatedComments: CommentEntity[] = response.data?.list ?? [];
-      const totalPages: number = response.data?.totalPagess ?? 1;
-      setComments(updatedComments);
-      setCommentPage(totalPages);
+      const newComments: CommentEntity[] = response.data?.list ?? [];
+      const total = response.data?.totalPages ?? 1;
+      setComments((prev) =>
+        pageNumber === 1 ? newComments : [...prev, ...newComments]
+      );
+      setTotalPages(total);
     } catch (err) {
       console.error(err);
     } finally {
@@ -59,37 +56,45 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
     }
   };
 
+  useEffect(() => {
+    if (loadingComments || page >= totalPages) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => {
+      if (observerRef.current) observer.unobserve(observerRef.current);
+    };
+  }, [loadingComments, totalPages, page]);
+
+  useEffect(() => {
+    if (page > 1 && page <= totalPages && task?.id) {
+      loadCommentsByTaskId(task.id, page);
+    }
+  }, [page]);
+
   const handleAddComment = async () => {
     if (!newComment.trim() || !task) return;
     try {
       setCommentSubmitting(true);
-      await createCommentByTaskId({ taskId: task.id, content: newComment });
+      await taskApiClient.post<void>(`${task.id}/comments`, { content: newComment });
       setNewComment('');
-    } catch (err) {
+    } catch (err: any) {
       alert(err.message || 'Failed to add comment');
     } finally {
       setCommentSubmitting(false);
     }
   };
 
-  const createCommentByTaskId = async ({
-    taskId,
-    content,
-  }: {
-    taskId: string;
-    content: string;
-  }) => {
-    try {
-      await taskApiClient.post<void>(`${taskId}/comments`, { content });
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return (
     <div className="mt-8">
       <p className="font-medium text-gray-800 mb-2">Comments</p>
-
       <div className="mt-4 flex gap-2">
         <input
           type="text"
@@ -107,21 +112,8 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
           {commentSubmitting ? 'Adding...' : 'Add'}
         </button>
       </div>
-
-      {loadingComments ? (
-        <ul className="space-y-2 mt-4 animate-pulse">
-          {Array.from({ length: 3 }).map((_, idx) => (
-            <li
-              key={idx}
-              className="border border-gray-100 rounded-lg p-3 bg-gray-50"
-            >
-              <div className="h-4 bg-gray-200 rounded w-3/4 shimmer mb-2" />
-              <div className="h-3 bg-gray-200 rounded w-1/3 shimmer" />
-            </li>
-          ))}
-        </ul>
-      ) : comments.length > 0 ? (
-        <ul className="space-y-2 mt-4">
+      {comments.length > 0 ? (
+        <ul className="space-y-2 mt-4 overflow-y-auto max-h-[400px]">
           {comments.map((comment) => (
             <li
               key={comment.id}
@@ -131,9 +123,24 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
               <p className="text-xs text-gray-500 mt-1">— {comment.authorName}</p>
             </li>
           ))}
+          {page < totalPages && (
+            <div ref={observerRef} className="h-10 flex justify-center items-center">
+              <span className="text-gray-500 text-sm">Loading more...</span>
+            </div>
+          )}
         </ul>
       ) : (
         <p className="text-gray-500 italic mt-4">No comments yet</p>
+      )}
+      {loadingComments && page === 1 && (
+        <div className="mt-4 animate-pulse">
+          {Array.from({ length: 3 }).map((_, idx) => (
+            <div key={idx} className="border border-gray-100 rounded-lg p-3 bg-gray-50 mb-2">
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+              <div className="h-3 bg-gray-200 rounded w-1/3" />
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
