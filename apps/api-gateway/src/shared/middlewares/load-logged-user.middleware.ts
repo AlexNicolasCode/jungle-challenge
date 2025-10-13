@@ -26,7 +26,7 @@ export class LoadLoggedUserMiddleware implements NestMiddleware {
     }
     try {
       const user: LoggedUserOutputDto = await firstValueFrom(
-        this.authClient.send('auth.user', {
+        this.authClient.send('auth.profile', {
           accessToken: token,
         }),
       );

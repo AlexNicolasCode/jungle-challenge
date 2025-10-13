@@ -35,7 +35,7 @@ export class NotificationGateway
     }
     const accessToken = client.handshake.headers['authorization'];
     const user: LoggedUserOutputDto = await firstValueFrom(
-      this.authClient.send('auth.user', {
+      this.authClient.send('auth.profile', {
         accessToken,
       }),
     );
