@@ -17,7 +17,7 @@ export class NotifyTaskCreatedUseCase {
         userId: dto.authorId,
         taskId: dto.taskId,
         taskTitle: dto.taskTitle,
-        type: 'TASK_CREATED',
+        event: 'task:created',
       });
     } catch (error) {
       this.logger.error(error);

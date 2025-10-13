@@ -1,5 +1,8 @@
 export type SendCommentInputDto = {
-  taskId: string;
+  task: {
+    id: string;
+    title: string;
+  };
   comment: {
     id: string;
     authorName: string;

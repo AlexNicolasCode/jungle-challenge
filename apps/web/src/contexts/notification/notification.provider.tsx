@@ -3,8 +3,9 @@ import { io } from 'socket.io-client';
 
 import { ToastNotification } from '../../components';
 import { useAuth } from '../../hooks';
+import { CommentEntity } from '../../shared/types';
 import { NotificationContext } from './notification.context';
-import { NotificationProviderProps, NotificationType } from './notification.types';
+import { NotificationProviderProps, NotificationType, NotificationTypeEnum } from './notification.types';
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
     const { tokens } = useAuth();
@@ -16,10 +17,31 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
             authorization: `Bearer ${tokens?.accessToken}`,
         }
     });
-    socket.on('notifications', (newNotification: NotificationType) => {
-      addNotification(newNotification);
+    socket.on('task:updated', (newNotification: NotificationType) => {
+      addNotification({
+        ...newNotification,
+        type: NotificationTypeEnum.TASK_UPDATED,
+      });
     });
-
+    socket.on('task:created', (newNotification: NotificationType) => {
+      addNotification({
+        ...newNotification,
+        type: NotificationTypeEnum.TASK_CREATED,
+      });
+    });
+    socket.on('comment:new', (payload: {
+      task: {
+        id: string;
+        title: string;
+      };
+      comment: CommentEntity;
+    }) => {
+        addNotification({
+            taskId: payload.task.id,
+            taskTitle: payload.task.title,
+            type: NotificationTypeEnum.COMMENT_CREATED,
+        });
+    });
     return () => {
         socket.close();
     }

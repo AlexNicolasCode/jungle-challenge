@@ -42,7 +42,7 @@ export class SendCommentService implements OnModuleInit, OnModuleDestroy {
   sendComment(dto: SendCommentInputDto): SendCommentOutputDto {
     if (this.apiGatewayWs && this.apiGatewayWs.connected) {
       console.log(`📤 Emitting event`);
-      this.apiGatewayWs.emit('comments', dto);
+      this.apiGatewayWs.emit('gateway:comment:new', dto);
     } else {
       console.warn(`Socket not connected, cannot emit`);
     }

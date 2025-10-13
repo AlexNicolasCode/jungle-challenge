@@ -17,7 +17,7 @@ export class NotifyTaskUpdateUseCase {
         userId: dto.authorId,
         taskId: dto.taskId,
         taskTitle: dto.taskTitle,
-        type: 'TASK_UPDATED',
+        event: 'task:updated',
       });
     } catch (error) {
       this.logger.error(error);

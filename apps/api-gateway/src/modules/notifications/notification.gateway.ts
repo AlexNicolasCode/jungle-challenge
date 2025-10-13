@@ -18,7 +18,7 @@ import { LoggedUserOutputDto } from 'src/shared/decorators';
 export class NotificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
-  private readonly loggedUsers = new Map<string, string>();
+  private readonly userSessions: { sessionId: string; userId: string }[] = [];
 
   constructor(
     @Inject('AUTH_SERVICE')
@@ -42,27 +42,27 @@ export class NotificationGateway
     if (!user?.id) {
       return;
     }
-    this.loggedUsers.set(user.id, client.id);
+    this.userSessions.push({ sessionId: client.id, userId: user.id });
   }
 
-  async handleDisconnect(client: Socket) {
+  handleDisconnect(client: Socket) {
     const apiKey = client.handshake.headers['x-api-key'];
     if (apiKey && apiKey === 'test') {
       return;
     }
-    const accessToken = client.handshake.headers['authorization'];
-    const user: LoggedUserOutputDto = await firstValueFrom(
-      this.authClient.send('auth.user', {
-        accessToken,
-      }),
+    const userSessions = this.userSessions.filter(
+      (u) => u.sessionId === client.id,
     );
-    if (!user?.id) {
-      return;
+    for (const session of userSessions) {
+      const sessionIndex = this.userSessions.indexOf(session);
+      if (!sessionIndex) {
+        continue;
+      }
+      this.userSessions.slice(sessionIndex, 1);
     }
-    this.loggedUsers.delete(user.id);
   }
 
-  @SubscribeMessage('notifications')
+  @SubscribeMessage('gateway:task:created')
   handleNotifications(
     @ConnectedSocket() client: Socket,
     @MessageBody()
@@ -77,23 +77,63 @@ export class NotificationGateway
     if (!apiKey || apiKey !== 'test') {
       return;
     }
-    const loggedUser = this.loggedUsers.get(payload.userId);
-    if (!loggedUser) {
+    const userSessions = this.userSessions.filter(
+      (u) => u.userId === payload.userId,
+    );
+    const hasUserSessions = userSessions.length > 0;
+    if (!hasUserSessions) {
       return;
     }
-    this.wss.to(loggedUser).emit('notifications', {
-      taskId: payload.taskId,
-      taskTitle: payload.taskTitle,
-      type: payload.type,
-    });
+    for (const session of userSessions) {
+      this.wss.to(session.sessionId).emit('task:created', {
+        taskId: payload.taskId,
+        taskTitle: payload.taskTitle,
+        type: payload.type,
+      });
+    }
   }
 
-  @SubscribeMessage('comments')
+  @SubscribeMessage('gateway:task:updated')
+  handleTaskUpdated(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: {
+      userId: string;
+      taskId: string;
+      taskTitle: string;
+      type: string;
+    },
+  ) {
+    const apiKey = client.handshake.headers['x-api-key'];
+    if (!apiKey || apiKey !== 'test') {
+      return;
+    }
+    const userSessions = this.userSessions.filter(
+      (u) => u.userId === payload.userId,
+    );
+    const hasUserSessions = userSessions.length > 0;
+    if (!hasUserSessions) {
+      return;
+    }
+    for (const session of userSessions) {
+      this.wss.to(session.sessionId).emit('task:updated', {
+        taskId: payload.taskId,
+        taskTitle: payload.taskTitle,
+        type: payload.type,
+      });
+    }
+  }
+
+  @SubscribeMessage('gateway:comment:new')
   handleTaskComments(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     payload: {
-      taskId: string;
+      task: {
+        id: string;
+        title: string;
+        releatedUsersId: string[];
+      };
       comment: {
         id: string;
         authorName: string;
@@ -106,6 +146,20 @@ export class NotificationGateway
     if (!apiKey || apiKey !== 'test') {
       return;
     }
-    this.wss.emit(`tasks/${payload.taskId}/comments`, payload.comment);
+    for (const userId of payload.task.releatedUsersId) {
+      const relatedUserSessions = this.userSessions.filter(
+        (u) => u.userId === userId,
+      );
+      const hasUserSessions = relatedUserSessions.length > 0;
+      if (!hasUserSessions) {
+        return;
+      }
+      for (const session of relatedUserSessions) {
+        this.wss.to(session.sessionId).emit('comment:new', {
+          task: payload.task,
+          comment: payload.comment,
+        });
+      }
+    }
   }
 }

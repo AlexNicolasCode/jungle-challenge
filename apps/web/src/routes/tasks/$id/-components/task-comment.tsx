@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { taskApiClient } from '../../../../clients/tasks';
 import { useAuth } from '../../../../hooks';
@@ -32,16 +32,25 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
     const socket = io('http://localhost:3000/notifications', {
       extraHeaders: { authorization: `Bearer ${tokens.accessToken}` },
     });
-    socket.on(`tasks/${task.id}/comments`, addComment);
+    socket.on(`comment:new`, addComment);
     return () => socket.close();
   }, [task?.id, tokens?.accessToken]);
 
-  const addComment = useCallback((comment: CommentEntity) => {
-    setComments((prev) => [comment, ...prev]);
-    if (commentsContainerRef.current) {
-      commentsContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }, []);
+  const addComment = (payload: {
+      task: {
+        id: string;
+        title: string;
+      };
+      comment: CommentEntity;
+    }) => {
+        if (task.id !== payload.task.id) {
+            return;
+        }
+        setComments((prev) => [payload.comment, ...prev]);
+        if (commentsContainerRef.current) {
+            commentsContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+  }
 
   const loadCommentsByTaskId = async (taskId: string, pageNumber: number) => {
     try {

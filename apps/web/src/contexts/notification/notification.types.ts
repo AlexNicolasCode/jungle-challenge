@@ -7,9 +7,9 @@ export type NotificationType = {
 }
 
 export enum NotificationTypeEnum {
-  NEW_COMMENT = 'COMMENT_CREATED',
-  TASK_CREATED = 'TASK_CREATED',
-  TASK_UPDATED = 'TASK_UPDATED',
+    TASK_CREATED = 'task:created',
+    TASK_UPDATED = 'task:updated',
+    COMMENT_CREATED = 'comment:new',
 }
 
 export interface NotificationContextType {

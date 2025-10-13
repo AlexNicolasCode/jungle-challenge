@@ -45,15 +45,14 @@ export class SendNotificationToClientService
     userId,
     taskId,
     taskTitle,
-    type,
+    event,
   }: SendNotificationToClientInputDto): SendNotificationToClientOutputDto {
     if (this.apiGatewayWs && this.apiGatewayWs.connected) {
-      console.log(`📤 Emitting event`);
-      this.apiGatewayWs.emit('notifications', {
+      console.log(`📤 Emitting event gateway:${event}`);
+      this.apiGatewayWs.emit(`gateway:${event}`, {
         userId,
         taskId,
         taskTitle,
-        type,
       });
     } else {
       console.warn(`Socket not connected, cannot emit`);
