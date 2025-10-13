@@ -1,5 +1,4 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { AuthProvider, LoadingProvider, NotificationProvider, TaskProvider } from './contexts'
@@ -19,7 +18,6 @@ const rootElement = document.getElementById('app')!
 if (!rootElement.innerHTML) {
   const root = createRoot(rootElement)
   root.render(
-    <StrictMode>
       <AuthProvider>
         <TaskProvider>
           <LoadingProvider>
@@ -29,6 +27,5 @@ if (!rootElement.innerHTML) {
           </LoadingProvider>
         </TaskProvider>
       </AuthProvider>
-    </StrictMode>,
   )
 }
