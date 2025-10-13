@@ -10,13 +10,16 @@ interface TaskCommentsProps {
 
 export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
   const { tokens } = useAuth();
+
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentEntity[]>([]);
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [commentSubmitting, setCommentSubmitting] = useState<boolean>(false);
   const [loadingComments, setLoadingComments] = useState<boolean>(false);
+
   const observerRef = useRef<HTMLDivElement | null>(null);
+  const commentsContainerRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
     if (task?.id) {
@@ -35,6 +38,9 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
 
   const addComment = useCallback((comment: CommentEntity) => {
     setComments((prev) => [comment, ...prev]);
+    if (commentsContainerRef.current) {
+      commentsContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   }, []);
 
   const loadCommentsByTaskId = async (taskId: string, pageNumber: number) => {
@@ -113,7 +119,10 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
         </button>
       </div>
       {comments.length > 0 ? (
-        <ul className="space-y-2 mt-4 overflow-y-auto max-h-[400px]">
+        <ul
+          ref={commentsContainerRef}
+          className="space-y-2 mt-4 overflow-y-auto max-h-[400px]"
+        >
           {comments.map((comment) => (
             <li
               key={comment.id}
