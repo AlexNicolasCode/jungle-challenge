@@ -140,8 +140,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       deadline: string;
       priority: TaskPriorityEnum;
       status: TaskStatusEnum;
-      createdAt: Date;
-      updatedAt: Date;
       users: UserEntity[];
     }) => {
     if (loading) {
@@ -149,17 +147,18 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     }
     setLoading(true);
     try {
-      const response = await taskApiClient.post<TaskEntity>('', {
+      await taskApiClient.post<TaskEntity>('', {
         title: task.title,
         deadline: task.deadline,
         priority: task.priority,
         status: task.status,
         users: [],
       });
-      const taskId: string = response.data.id;
-      setTasks((prev) => [...prev, { id: taskId, ...task }]);
+      setPage(1);
+      await loadTasks({});
       setError(undefined);
     } catch (err) {
+        console.error(error);
     } finally {
       setLoading(false);
     }

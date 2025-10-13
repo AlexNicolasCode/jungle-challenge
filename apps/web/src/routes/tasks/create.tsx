@@ -1,7 +1,7 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { useLoading, useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
@@ -21,7 +21,7 @@ type CreateTaskForm = z.infer<typeof createTaskSchema>;
 
 function CreateTaskPage() {
   const { loading, renderLoading } = useLoading();
-  const { createTask } = useTasks();
+  const { createTask, loadTasks } = useTasks();
   const navigate = useNavigate();
 
   const {
@@ -40,16 +40,15 @@ function CreateTaskPage() {
 
   const onSubmit = async (data: CreateTaskForm) => {
     try {
-      const newTask = {
-        title: data.title,
-        priority: data.priority,
-        status: data.status,
-        deadline: data.deadline
-          ? new Date(data.deadline).toISOString()
-          : new Date().toISOString(),
-        users: [],
-      };
-      await createTask(newTask);
+      await createTask({
+          title: data.title,
+          priority: data.priority,
+          status: data.status,
+          deadline: data.deadline
+              ? new Date(data.deadline).toISOString()
+              : new Date().toISOString(),
+          users: [],
+      });
       navigate({ to: '/' });
     } catch (err: any) {
       alert(err.message || 'Failed to create task');
@@ -130,7 +129,7 @@ function CreateTaskPage() {
     </div>
   );
 
-  return loading ? renderLoading('Creating task...') : renderPage(); 
+  return loading ? renderLoading('Creating task...') : renderPage();
 }
 
 export default CreateTaskPage;
