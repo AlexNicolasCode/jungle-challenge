@@ -1,13 +1,16 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
 import { taskApiClient } from '../../../../clients/tasks';
+import { useAuth } from '../../../../hooks';
 import { CommentEntity, TaskEntity } from '../../../../shared/types';
 
 interface TaskCommentsProps {
   task: TaskEntity;
 }
 
-const TaskCommentsComponent: React.FC<TaskCommentsProps> = ({ task }) => {
+export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
+  const { tokens } = useAuth();
   const [newComment, setNewComment] = useState<string>('');
   const [comments, setComments] = useState<CommentEntity[]>([]);
   const [commentsPage, setCommentPage] = useState<number>(1);
@@ -16,12 +19,26 @@ const TaskCommentsComponent: React.FC<TaskCommentsProps> = ({ task }) => {
 
   useEffect(() => {
     const handleStarts = async () => {
-      const hasComments = comments.length > 0;
-      if (!task || !task.id || hasComments) return;
-      await loadCommentsByTaskId(task.id);
+        const hasComments = comments.length > 0;
+        if (!task || !task.id || hasComments) return;
+        await loadCommentsByTaskId(task.id);
+        connectCommentsWebsocket();
     };
     handleStarts();
-  }, [task.id]);
+  }, []);
+
+  const connectCommentsWebsocket = () => {
+        const socket = io('http://localhost:3000/notifications', {
+            extraHeaders: {
+                authorization: `Bearer ${tokens?.accessToken}`,
+            }
+        });
+        socket.on(`tasks/${task.id}/comments`, addComment);
+  }
+
+  const addComment = (comment: CommentEntity) => {
+    setComments(prev => [comment, ...prev]);
+  }
 
   const loadCommentsByTaskId = async (taskId: string) => {
     try {
@@ -45,7 +62,6 @@ const TaskCommentsComponent: React.FC<TaskCommentsProps> = ({ task }) => {
     try {
       setCommentSubmitting(true);
       await createCommentByTaskId({ taskId: task.id, content: newComment });
-      await loadCommentsByTaskId(task.id);
       setNewComment('');
     } catch (err) {
       alert(err.message || 'Failed to add comment');
@@ -120,5 +136,3 @@ const TaskCommentsComponent: React.FC<TaskCommentsProps> = ({ task }) => {
     </div>
   );
 };
-
-export const TaskComments = memo(TaskCommentsComponent);

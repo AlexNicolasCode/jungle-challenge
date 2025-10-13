@@ -87,4 +87,25 @@ export class NotificationGateway
       type: payload.type,
     });
   }
+
+  @SubscribeMessage('comments')
+  handleTaskComments(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: {
+      taskId: string;
+      comment: {
+        id: string;
+        authorName: string;
+        content: string;
+        updatedAt: string;
+      };
+    },
+  ) {
+    const apiKey = client.handshake.headers['x-api-key'];
+    if (!apiKey || apiKey !== 'test') {
+      return;
+    }
+    this.wss.emit(`tasks/${payload.taskId}/comments`, payload.comment);
+  }
 }

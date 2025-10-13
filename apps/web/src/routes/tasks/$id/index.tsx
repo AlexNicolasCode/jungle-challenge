@@ -27,7 +27,6 @@ export function TaskDetailsPage() {
 
   const [task, setTask] = useState<TaskEntity | undefined>();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | undefined>();
   const [isEditMode, setIsEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
 
@@ -36,27 +35,28 @@ export function TaskDetailsPage() {
   });
 
   useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        const fetchedTask = await loadTaskById(id);
-        if (!fetchedTask) {
-          navigate({ to: '/' });
-          return;
-        }
-        setTask(fetchedTask);
-        reset({
-          title: fetchedTask.title,
-          priority: fetchedTask.priority,
-          status: fetchedTask.status,
-        });
-      } catch (err) {
-        setError(err.message || 'Failed to load task');
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchTask();
-  }, [id]);
+    }, [id]);
+
+    const fetchTask = async () => {
+        try {
+            const fetchedTask = await loadTaskById(id);
+            if (!fetchedTask) {
+                navigate({ to: '/' });
+                return;
+            }
+            setTask(fetchedTask);
+            reset({
+                title: fetchedTask.title,
+                priority: fetchedTask.priority,
+                status: fetchedTask.status,
+            });
+        } catch (err) {
+            navigate({ to: '/' });
+        } finally {
+            setLoading(false);
+        }
+    };
 
   const onSubmit = async (data: EditTaskForm) => {
     if (!task) return;
@@ -108,9 +108,6 @@ export function TaskDetailsPage() {
       </div>
     );
   }
-
-  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
-  if (!task) return <div className="p-6 text-gray-600">Task not found.</div>;
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">

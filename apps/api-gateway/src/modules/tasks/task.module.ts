@@ -1,8 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-import { TaskController } from './task.controller';
 import { LoadLoggedUserMiddleware } from 'src/shared/middlewares';
+import { TaskCommentGateway } from './task-comment.gateway';
+import { TaskController } from './task.controller';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { LoadLoggedUserMiddleware } from 'src/shared/middlewares';
     ]),
   ],
   controllers: [TaskController],
-  providers: [],
+  providers: [TaskCommentGateway],
 })
 export class TaskModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

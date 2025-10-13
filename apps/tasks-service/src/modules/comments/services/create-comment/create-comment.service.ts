@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 
 import { CommentRepository } from 'src/database/repositories';
@@ -18,8 +18,13 @@ export class CreateCommentService {
     dto: CreateCommentInputDto,
   ): Promise<CreateCommentOutputDto> {
     try {
-      await this.commentRepository.save(dto);
-      return null;
+      const comment = await this.commentRepository.save(dto);
+      return {
+        id: comment.id,
+        authorName: comment.author.name,
+        content: comment.content,
+        updatedAt: comment.updatedAt,
+      };
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException();
