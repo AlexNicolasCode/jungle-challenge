@@ -1,9 +1,9 @@
 import {
-  Injectable,
-  Inject,
-  UnauthorizedException,
-  Logger,
-  NestMiddleware,
+    Inject,
+    Injectable,
+    Logger,
+    NestMiddleware,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { NextFunction } from 'express';
@@ -34,8 +34,7 @@ export class LoadLoggedUserMiddleware implements NestMiddleware {
         throw new UnauthorizedException();
       }
       req['user'] = user;
-    } catch (error) {
-      this.logger.error(error);
+    } catch (_error) {
       throw new UnauthorizedException();
     }
     next();

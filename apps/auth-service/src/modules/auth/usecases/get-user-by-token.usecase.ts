@@ -1,7 +1,7 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    Logger,
+    UnauthorizedException
 } from '@nestjs/common';
 
 import { GetUserByTokenInputDto, GetUserByTokenOutputDto } from '../dtos';
@@ -35,9 +35,8 @@ export class GetUserByTokenUseCase {
         id: user.id,
         name: user.name,
       };
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException();
+    } catch (_error) {
+      throw new UnauthorizedException();
     }
   }
 }
