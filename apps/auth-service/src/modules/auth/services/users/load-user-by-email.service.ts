@@ -1,10 +1,9 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 
-import { UserEntity } from 'src/database/entities';
 import { UserRepository } from 'src/database/repositories';
 
 @Injectable()
@@ -13,9 +12,19 @@ export class LoadUserByEmailService {
 
   constructor(private readonly userRepository: UserRepository) {}
 
-  async loadUserByEmail(email: string): Promise<UserEntity | null> {
+  async loadUserByEmail(
+    email: string,
+  ): Promise<{ id: string; name: string; email: string } | null> {
     try {
-      return this.userRepository.loadByEmail(email);
+      const user = await this.userRepository.loadByEmail(email);
+      if (!user) {
+        return null;
+      }
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      };
     } catch (error) {
       this.logger.error(error);
       throw new InternalServerErrorException();

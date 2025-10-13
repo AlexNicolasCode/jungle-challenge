@@ -11,6 +11,7 @@ import {
     Post,
     Put,
     Query,
+    UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -24,6 +25,7 @@ import {
 import { Observable } from 'rxjs';
 
 import { LoggedUser, LoggedUserOutputDto } from 'src/shared/decorators';
+import { JwtAuthGuard } from 'src/shared/guards';
 import {
     CreateCommentInputDto,
     CreateCommentOutputDto,
@@ -41,6 +43,7 @@ import {
     UpdateTaskByIdOutputDto,
 } from './dtos';
 
+@UseGuards(JwtAuthGuard)
 @ApiTags('Tasks')
 @Controller('api/tasks')
 export class TaskController {
@@ -90,7 +93,7 @@ export class TaskController {
     return this.taskClient.send('task.updateById', {
       ...dto,
       id: taskId,
-      loggedUser,
+      loggedUser: { id: loggedUser.id, name: loggedUser.email },
     });
   }
 
@@ -104,7 +107,7 @@ export class TaskController {
     @Param() params: DeleteTaskByIdInputDto,
     @LoggedUser() loggedUser: LoggedUserOutputDto,
   ): Observable<DeleteTaskByIdOutputDto> {
-    return this.taskClient.send('task.deleteById', { ...params, loggedUser });
+    return this.taskClient.send('task.deleteById', { ...params, loggedUser: { id: loggedUser.id, name: loggedUser.email } });
   }
 
   @Post()
@@ -122,8 +125,8 @@ export class TaskController {
   ): Observable<CreateTaskOutputDto> {
     return this.taskClient.send('task.create', {
       ...dto,
-      users: [{ id: loggedUser.id, name: loggedUser.name }],
-      loggedUser,
+      users: [{ id: loggedUser.id, name: loggedUser.email }],
+      loggedUser: { id: loggedUser.id, name: loggedUser.email },
     });
   }
 

@@ -1,15 +1,16 @@
-import { Controller, Post, Body, Inject } from '@nestjs/common';
+import { Body, Controller, Inject, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Observable } from 'rxjs';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 
+import { LocalAuthGuard } from 'src/shared/guards/local-auth.guard';
 import {
-  CreateUserInputDto,
-  CreateUserOutputDto,
-  LoginInputDto,
-  LoginOutputDto,
-  RefreshTokenInputDto,
-  RefreshTokenOutputDto,
+    CreateUserInputDto,
+    CreateUserOutputDto,
+    LoginInputDto,
+    LoginOutputDto,
+    RefreshTokenInputDto,
+    RefreshTokenOutputDto,
 } from './dtos';
 
 @ApiTags('Auth')
@@ -30,6 +31,7 @@ export class AuthController {
     return this.authClient.send('auth.register', dto);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('login')
   @ApiOperation({ summary: 'Login a user' })
   @ApiResponse({

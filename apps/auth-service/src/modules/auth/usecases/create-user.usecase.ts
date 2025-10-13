@@ -1,16 +1,16 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  UnprocessableEntityException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    UnprocessableEntityException,
 } from '@nestjs/common';
 
 import { CreateUserInputDto, CreateUserOutputDto } from '../dtos';
 import {
-  CheckUserExistsByEmailService,
-  CreateUserService,
-  GenerateAuthTokensService,
-  HashService,
+    CheckUserExistsByEmailService,
+    CreateUserService,
+    GenerateAuthTokensService,
+    HashService,
 } from '../services';
 
 @Injectable()
@@ -34,13 +34,13 @@ export class CreateUserUseCase {
     }
     try {
       const passwordHash = await this.hashService.hash(dto.password);
-      await this.createUserService.createUser({
+      const user = await this.createUserService.createUser({
         name: dto.name,
         email: dto.email,
         password: passwordHash,
       });
       return this.generateAuthTokensService.generateAuthTokens({
-        name: dto.name,
+        id: user.id,
         email: dto.email,
       });
     } catch (error) {

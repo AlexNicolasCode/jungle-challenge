@@ -1,4 +1,4 @@
 export type GenerateTokenInputDto = {
-  name: string;
+  id: string;
   email: string;
 };

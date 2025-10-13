@@ -51,7 +51,7 @@ export class DecodeTokenService {
         },
       );
       return {
-        name: decodedToken['name'],
+        id: decodedToken['id'],
         email: decodedToken['email'],
         iat: decodedToken.iat,
         exp: decodedToken.exp,
@@ -70,7 +70,7 @@ export class DecodeTokenService {
         },
       );
       return {
-        name: decodedToken['name'],
+        id: decodedToken['id'],
         email: decodedToken['email'],
         iat: decodedToken.iat,
         exp: decodedToken.exp,

@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { Inject, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
     ConnectedSocket,
@@ -13,7 +13,9 @@ import { firstValueFrom } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 
 import { LoggedUserOutputDto } from 'src/shared/decorators';
+import { JwtAuthGuard } from 'src/shared/guards';
 
+@UseGuards(JwtAuthGuard)
 @WebSocketGateway({ namespace: 'notifications', cors: true })
 export class NotificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect

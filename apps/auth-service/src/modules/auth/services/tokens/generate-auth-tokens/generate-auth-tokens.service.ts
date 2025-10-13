@@ -1,12 +1,12 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
 } from '@nestjs/common';
 
 import { GenerateTokenService } from '..';
-import { GenerateAuthTokensOutputDto } from './generate-auth-tokens.output.dto';
 import { GenerateAuthTokensInputDto } from './generate-auth-tokens.input.dto';
+import { GenerateAuthTokensOutputDto } from './generate-auth-tokens.output.dto';
 
 @Injectable()
 export class GenerateAuthTokensService {
@@ -15,13 +15,13 @@ export class GenerateAuthTokensService {
   constructor(private readonly generateTokenService: GenerateTokenService) {}
 
   generateAuthTokens({
-    name,
+    id,
     email,
   }: GenerateAuthTokensInputDto): GenerateAuthTokensOutputDto {
     try {
       const { token: accessToken } =
         this.generateTokenService.generateAccessToken({
-          name,
+          id,
           email,
         });
       const {
@@ -29,7 +29,7 @@ export class GenerateAuthTokensService {
         expireAt,
         expiresIn,
       } = this.generateTokenService.generateRefreshToken({
-        name,
+        id,
         email,
       });
       return {

@@ -1,27 +1,28 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtService } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { PasswordEntity, UserEntity } from 'src/database/entities';
+import { PasswordRepository, UserRepository } from 'src/database/repositories';
 import { AuthController } from './auth.controller';
 import {
-  CheckUserExistsByEmailService,
-  CompareHashsService,
-  CreateUserService,
-  DecodeTokenService,
-  GenerateAuthTokensService,
-  GenerateTokenService,
-  HashService,
-  LoadPasswordByUserIdService,
-  LoadUserByEmailService,
+    CheckUserExistsByEmailService,
+    CompareHashsService,
+    CreateUserService,
+    DecodeTokenService,
+    GenerateAuthTokensService,
+    GenerateTokenService,
+    HashService,
+    LoadPasswordByUserIdService,
+    LoadUserByEmailService,
 } from './services';
-import { PasswordRepository, UserRepository } from 'src/database/repositories';
-import { PasswordEntity, UserEntity } from 'src/database/entities';
 import {
-  CreateUserUseCase,
-  GetUserByTokenUseCase,
-  LoginUseCase,
-  RefreshTokenUseCase,
+    CreateUserUseCase,
+    GetUserByTokenUseCase,
+    LoginUseCase,
+    RefreshTokenUseCase,
+    ValidateUserUseCase,
 } from './usecases';
 
 @Module({
@@ -31,6 +32,7 @@ import {
   ],
   controllers: [AuthController],
   providers: [
+    ValidateUserUseCase,
     GetUserByTokenUseCase,
     LoginUseCase,
     CreateUserUseCase,

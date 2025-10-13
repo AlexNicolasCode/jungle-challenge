@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
-import { AuthModule, TaskModule, NotificationModule } from './modules';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule, NotificationModule, TaskModule } from './modules';
+import { JwtStrategy, LocalStrategy } from './shared/strategies';
 
 @Module({
   imports: [
@@ -16,8 +18,20 @@ import { ThrottlerModule } from '@nestjs/throttler';
         limit: 10,
       },
     ]),
+    ClientsModule.register([
+      {
+        name: 'AUTH_SERVICE',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 3001,
+          retryAttempts: 10,
+          retryDelay: 3000,
+        },
+      },
+    ]),
   ],
   controllers: [],
-  providers: [],
+  providers: [JwtStrategy, LocalStrategy],
 })
 export class AppModule {}

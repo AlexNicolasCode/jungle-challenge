@@ -10,12 +10,15 @@ import {
     LoginOutputDto,
     RefreshTokenInputDto,
     RefreshTokenOutputDto,
+    ValidateUserInputDto,
+    ValidateUserOutputDto,
 } from './dtos';
 import {
     CreateUserUseCase,
     GetUserByTokenUseCase,
     LoginUseCase,
     RefreshTokenUseCase,
+    ValidateUserUseCase,
 } from './usecases';
 
 @Controller()
@@ -25,6 +28,7 @@ export class AuthController {
     private readonly loginUseCase: LoginUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
     private readonly getUserByTokenUseCase: GetUserByTokenUseCase,
+    private readonly validateUserUseCase: ValidateUserUseCase,
   ) {}
 
   @MessagePattern('auth.register')
@@ -45,5 +49,10 @@ export class AuthController {
   @MessagePattern('auth.profile')
   token(dto: GetUserByTokenInputDto): Promise<GetUserByTokenOutputDto> {
     return this.getUserByTokenUseCase.execute(dto);
+  }
+
+  @MessagePattern('auth.validateUser')
+  validateUser(dto: ValidateUserInputDto): Promise<ValidateUserOutputDto> {
+    return this.validateUserUseCase.execute(dto);
   }
 }
