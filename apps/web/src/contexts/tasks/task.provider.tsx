@@ -48,6 +48,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setLoading(true);
     try {
         updateWindowUrlParams(newQuery);
+        if (newQuery.search && newQuery.search.length < 3) {
+            return
+        }
         const pageParam = newQuery == query ? page : 1;
       const response = await taskApiClient.get('', {
         params: {

@@ -28,7 +28,10 @@ function HomePage() {
   });
 
   useEffect(() => {
+    const handler = setTimeout(() => {
     if (!loading) loadTasks(filters);
+    }, 1000);
+    return () => clearTimeout(handler);
   }, [filters]);
 
   const handleScroll = useCallback(() => {
