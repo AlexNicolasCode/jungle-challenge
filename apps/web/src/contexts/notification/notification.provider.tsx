@@ -48,12 +48,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   }, [tokens])
 
   const addNotification = (newNotification: NotificationType) => {
-    if (
-        window.location.pathname === `/tasks/${newNotification.taskId}` ||
-        notification?.taskId === newNotification.taskId
-    ) {
-        return;
-    }
     setNotification(newNotification);
     setTimeout(() => {
         setNotification(null);
