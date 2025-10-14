@@ -1,5 +1,8 @@
+import { CheckCircle2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+
 import { NotificationType, NotificationTypeEnum } from '../contexts/notification';
+import { Alert, AlertTitle } from './ui/alert';
 
 export const ToastNotification: React.FC<NotificationType> = ({ type, taskTitle }) => {
   const [visible, setVisible] = useState<boolean>(false);
@@ -19,11 +22,14 @@ export const ToastNotification: React.FC<NotificationType> = ({ type, taskTitle 
 
   return (
     <div
-      className={`fixed bottom-5 right-5 z-50 transition-all transform ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-      } bg-blue-600 text-white px-4 py-2 rounded shadow-lg`}
+        className={`fixed bottom-5 right-5 z-50 transition-all transform ${
+            visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        } px-4 py-2 bg-none`}
     >
-      {message}
+        <Alert>
+            <CheckCircle2Icon />
+            <AlertTitle>{message}</AlertTitle>
+        </Alert>
     </div>
   );
 };
