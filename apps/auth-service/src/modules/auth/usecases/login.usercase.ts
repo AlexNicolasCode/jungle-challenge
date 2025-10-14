@@ -18,6 +18,7 @@ export class LoginUseCase {
     });
     return this.generateAuthTokensService.generateAuthTokens({
       id: user.id,
+      name: user.name,
       email: user.email,
     });
   }

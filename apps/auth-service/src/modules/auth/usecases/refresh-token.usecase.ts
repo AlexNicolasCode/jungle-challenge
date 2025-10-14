@@ -27,7 +27,7 @@ export class RefreshTokenUseCase {
       token: dto.refreshToken,
       type: 'refresh',
     });
-    if (!decodedToken || !decodedToken?.email || !decodedToken?.id) {
+    if (!decodedToken || !decodedToken?.email || !decodedToken?.id || !decodedToken?.name) {
       throw new UnprocessableEntityException(
         'Invalid or expired token. Please, generate a new token.',
       );
@@ -42,10 +42,12 @@ export class RefreshTokenUseCase {
     }
     const token = this.generateTokenService.generateAccessToken({
       id: decodedToken.id,
+      name: decodedToken.name,
       email: decodedToken.email,
     });
     const refreshToken = this.generateTokenService.generateRefreshToken({
       id: decodedToken.id,
+      name: decodedToken.name,
       email: decodedToken.email,
     });
     return {

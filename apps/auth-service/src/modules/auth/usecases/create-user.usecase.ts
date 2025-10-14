@@ -41,6 +41,7 @@ export class CreateUserUseCase {
       });
       return this.generateAuthTokensService.generateAuthTokens({
         id: user.id,
+        name: dto.name,
         email: dto.email,
       });
     } catch (error) {

@@ -14,24 +14,15 @@ export class GenerateAuthTokensService {
 
   constructor(private readonly generateTokenService: GenerateTokenService) {}
 
-  generateAuthTokens({
-    id,
-    email,
-  }: GenerateAuthTokensInputDto): GenerateAuthTokensOutputDto {
+  generateAuthTokens(dto: GenerateAuthTokensInputDto): GenerateAuthTokensOutputDto {
     try {
       const { token: accessToken } =
-        this.generateTokenService.generateAccessToken({
-          id,
-          email,
-        });
+        this.generateTokenService.generateAccessToken(dto);
       const {
         token: refreshToken,
         expireAt,
         expiresIn,
-      } = this.generateTokenService.generateRefreshToken({
-        id,
-        email,
-      });
+      } = this.generateTokenService.generateRefreshToken(dto);
       return {
         accessToken,
         refreshToken,
