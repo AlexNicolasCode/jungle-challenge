@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import React, { useEffect, useRef, useState } from 'react';
 import { io } from 'socket.io-client';
 import { taskApiClient } from '../../../../clients/tasks';
@@ -112,7 +113,7 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
     <div className="mt-8">
       <p className="font-medium text-gray-800 mb-2">Comments</p>
       <div className="mt-4 flex gap-2">
-        <input
+        <Input
           type="text"
           placeholder="Write a comment..."
           value={newComment}

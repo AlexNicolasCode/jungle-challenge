@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { useLoading, useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
 
@@ -71,12 +72,9 @@ function CreateTaskPage() {
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className="font-medium text-gray-700">Title</label>
-            <input
+            <Input
               {...register('title')}
               type="text"
-              className={`mt-1 border rounded px-3 py-2 w-full ${
-                errors.title ? 'border-red-500' : 'border-gray-300'
-              }`}
             />
             {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
           </div>
@@ -111,10 +109,9 @@ function CreateTaskPage() {
 
           <div className="col-span-2">
             <label className="font-medium text-gray-700">Deadline</label>
-            <input
+            <Input
               {...register('deadline')}
               type="datetime-local"
-              className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
             />
           </div>
 

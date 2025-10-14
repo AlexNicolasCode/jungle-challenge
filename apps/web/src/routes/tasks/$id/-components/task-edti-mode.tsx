@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import React from 'react';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../../shared/enums';
 
@@ -30,7 +31,7 @@ export const TaskEditMode: React.FC<TaskEditModeProps> = ({
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-3">
           {isEditMode ? (
-            <input
+            <Input
               type="text"
               {...register('title')}
               className={`border rounded px-2 py-1 text-lg font-medium ${

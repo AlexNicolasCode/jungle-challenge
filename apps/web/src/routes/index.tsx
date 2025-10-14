@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { useLoading, useTasks } from '../hooks';
@@ -17,7 +18,6 @@ function HomePage() {
   const navigate = useNavigate();
   const { loading } = useLoading();
   const { tasks, error, loadTasks, handleNextPage } = useTasks();
-  const [openMenuId, setOpenMenuId] = useState<string | undefined>();
   const [filters, setFilters] = useState<{
     status?: TaskStatusEnum;
     priority?: TaskPriorityEnum;
@@ -81,10 +81,9 @@ function HomePage() {
       <div className="flex flex-wrap gap-4 mb-6 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium mb-1">Search</label>
-          <input
+          <Input
             type="text"
             placeholder="Search tasks..."
-            className="w-full border border-gray-300 rounded px-3 py-2"
             value={filters.search ?? ''}
             onChange={(e) => handleFilterChange('search', e.target.value)}
           />
