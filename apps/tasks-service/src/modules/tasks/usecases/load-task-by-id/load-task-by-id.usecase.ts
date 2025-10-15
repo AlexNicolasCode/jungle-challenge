@@ -27,7 +27,8 @@ export class LoadTaskByIdUseCase {
     try {
       return task;
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(`Error when try load task by id`, error);
+      this.logger.error(`Payload ${JSON.stringify(dto)}`);
       throw new InternalServerErrorException();
     }
   }

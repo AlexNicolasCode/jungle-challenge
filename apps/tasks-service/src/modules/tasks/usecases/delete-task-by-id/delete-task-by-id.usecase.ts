@@ -30,7 +30,8 @@ export class DeleteTaskByIdUseCase {
       await this.deleteTaskByIdService.deleteTaskById({ taskId });
       return null;
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(`Error when try delete task by id`, error);
+      this.logger.error(`Payload ${JSON.stringify(dto)}`);
       throw new InternalServerErrorException();
     }
   }

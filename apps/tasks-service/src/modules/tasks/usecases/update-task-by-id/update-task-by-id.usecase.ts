@@ -49,7 +49,8 @@ export class UpdateTaskByIdUseCase {
       }
       return null;
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(`Error when try update task by id`, error);
+      this.logger.error(`Payload ${JSON.stringify(dto)}`);
       throw new InternalServerErrorException();
     }
   }

@@ -31,7 +31,8 @@ export class CreateTaskUseCase {
       }
       return { id: task.id };
     } catch (error) {
-      this.logger.error(error);
+      this.logger.error(`Error when try create task`, error);
+      this.logger.error(`Payload ${JSON.stringify(dto)}`);
       throw new InternalServerErrorException();
     }
   }
