@@ -52,23 +52,25 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
             return
         }
         const pageParam = newQuery == query ? page : 1;
-      const response = await taskApiClient.get('', {
-        params: {
-          page: pageParam,
-          size: 10,
-          ...newQuery,
-        },
-      });
-      const tasks: TaskEntity[] = response.data?.list ?? [];
-      const totalPages: number = response.data?.totalPagess ?? 1;
-      setQuery(query);
-      setMaxPage(totalPages);
-      setTasks(tasks);
-      setError(undefined);
+        const response = await taskApiClient.get('', {
+            params: {
+            page: pageParam,
+            size: 10,
+            priority: newQuery.priority?.toString() === 'ALL' ? undefined : newQuery.priority,
+            status: newQuery.status?.toString() === 'ALL' ?  undefined : newQuery.status,
+            search: newQuery.search,
+            },
+        });
+        const tasks: TaskEntity[] = response.data?.list ?? [];
+        const totalPages: number = response.data?.totalPagess ?? 1;
+        setQuery(query);
+        setMaxPage(totalPages);
+        setTasks(tasks);
+        setError(undefined);
     } catch (error) {
         console.log(error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   }, [page]);
 

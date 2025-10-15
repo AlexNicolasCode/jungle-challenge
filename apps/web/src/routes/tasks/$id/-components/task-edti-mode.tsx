@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import React from 'react';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../../shared/enums';
 
@@ -47,17 +48,32 @@ export const TaskEditMode: React.FC<TaskEditModeProps> = ({
         <div className="flex items-center gap-3">
           {isEditMode ? (
             <>
-              <select {...register('status')} disabled={updating} className="border border-gray-300 rounded px-2 py-1">
-                {Object.values(TaskStatusEnum).map((status) => (
-                  <option key={status} value={status}>{status.replace('_', ' ')}</option>
-                ))}
-              </select>
-              <Button
-                type="submit"
-                disabled={isSubmitting || updating}
-              >
-                Save
-              </Button>
+                <Select {...register('priority')} disabled={updating}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(TaskPriorityEnum).map((priority) => (
+                            <SelectItem key={priority} value={priority}>{priority}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Select {...register('status')} disabled={updating}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(TaskStatusEnum).map((status) => (
+                            <SelectItem key={status} value={status}>{status.replace('_', ' ')}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+                <Button
+                    type="submit"
+                    disabled={isSubmitting || updating}
+                >
+                    Save
+                </Button>
             </>
           ) : (
             <Button
@@ -68,16 +84,6 @@ export const TaskEditMode: React.FC<TaskEditModeProps> = ({
           )}
         </div>
       </div>
-
-      {isEditMode && (
-        <div className="mt-6">
-          <select {...register('priority')} disabled={updating} className="border border-gray-300 rounded px-3 py-2 w-full bg-white">
-            {Object.values(TaskPriorityEnum).map((priority) => (
-              <option key={priority} value={priority}>{priority}</option>
-            ))}
-          </select>
-        </div>
-      )}
     </form>
   );
 };

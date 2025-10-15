@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallback, useEffect, useState } from 'react';
+
 import { useLoading, useTasks } from '../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../shared/enums';
 
@@ -30,8 +32,11 @@ function HomePage() {
 
   useEffect(() => {
     const handler = setTimeout(() => {
-    if (!loading) loadTasks(filters);
-    }, 1000);
+        if (loading) {
+            return;
+        }
+        loadTasks(filters);
+    }, 200);
     return () => clearTimeout(handler);
   }, [filters]);
 
@@ -45,10 +50,6 @@ function HomePage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
-
-  const toggleMenu = (taskId: string) => {
-    setOpenMenuId((prev) => (prev === taskId ? null : taskId));
-  };
 
   const handleViewDetails = (taskId: string) => {
     navigate({ to: `/tasks/${taskId}` });
@@ -90,35 +91,39 @@ function HomePage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Status</label>
-          <select
-            className="border border-gray-300 rounded px-3 py-2"
-            value={filters.status ?? ''}
-            onChange={(e) => handleFilterChange('status', e.target.value)}
-          >
-            <option value="">All</option>
-            {Object.values(TaskStatusEnum).map((status) => (
-              <option key={status} value={status}>
-                {status.replace('_', ' ')}
-              </option>
-            ))}
-          </select>
+            <label className="block text-sm font-medium mb-1">Status</label>
+            <Select
+                value={filters.status ?? ''}
+                onValueChange={(e) => handleFilterChange('status', e)}
+            >
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="ALL" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="ALL">ALL</SelectItem>
+                    {Object.values(TaskStatusEnum).map((status) => (
+                        <SelectItem key={status} value={status}>{status.replace('_', ' ')}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Priority</label>
-          <select
-            className="border border-gray-300 rounded px-3 py-2"
-            value={filters.priority ?? ''}
-            onChange={(e) => handleFilterChange('priority', e.target.value)}
-          >
-            <option value="">All</option>
-            {Object.values(TaskPriorityEnum).map((priority) => (
-              <option key={priority} value={priority}>
-                {priority}
-              </option>
-            ))}
-          </select>
+            <label className="block text-sm font-medium mb-1">Priority</label>
+            <Select
+                value={filters.priority ?? ''}
+                onValueChange={(e) => handleFilterChange('priority', e)}
+            >
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="ALL" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="ALL">ALL</SelectItem>
+                    {Object.values(TaskPriorityEnum).map((priority) => (
+                        <SelectItem key={priority} value={priority}>{priority}</SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
       </div>
 
