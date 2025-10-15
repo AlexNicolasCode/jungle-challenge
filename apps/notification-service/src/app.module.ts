@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 
+import { HealthzController } from './healthz.controller';
 import { NotificationModule } from './modules/notifications/notification.module';
 
 @Module({
   imports: [NotificationModule],
-  providers: [],
+  controllers: [HealthzController],
 })
 export class AppModule {}

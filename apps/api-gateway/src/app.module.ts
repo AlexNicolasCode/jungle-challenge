@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { HealthzController } from './healthz.controller';
 import { AuthModule, NotificationModule, TaskModule } from './modules';
 import { JwtStrategy, LocalStrategy } from './shared/strategies';
 
@@ -31,7 +32,7 @@ import { JwtStrategy, LocalStrategy } from './shared/strategies';
       },
     ]),
   ],
-  controllers: [],
+  controllers: [HealthzController],
   providers: [JwtStrategy, LocalStrategy],
 })
 export class AppModule {}
