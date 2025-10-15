@@ -3,7 +3,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Button } from '@/components/ui/button';
+import { BackToHome } from '@/components';
 import { Input } from '@/components/ui/input';
 import { useLoading, useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
@@ -59,13 +59,7 @@ function CreateTaskPage() {
 
   const renderPage = () => (
     <div className="min-h-screen bg-gray-100 p-6">
-      <Button
-        onClick={() => navigate({ to: '/' })}
-        className="mb-4"
-      >
-        ← Back to Tasks
-      </Button>
-
+      <BackToHome />
       <div className="bg-white rounded-2xl shadow p-6 max-w-2xl mx-auto">
         <h1 className="text-2xl font-semibold text-gray-900 mb-4">Create New Task</h1>
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 
-import { Button } from '@/components/ui/button';
+import { BackToHome } from '@/components';
 import { useTasks } from '../../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../shared/enums';
 import { TaskEntity } from '../../../shared/types';
@@ -82,58 +82,56 @@ export function TaskDetailsPage() {
     }
   };
 
-  if (loading) {
+  const renderLoading = () => {
     return (
-      <div className="min-h-screen bg-gray-100 p-6 animate-pulse">
-        <Button
-            onClick={() => navigate({ to: '/' })}
-            className="mb-4 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-black outline"
-        >
-            ← Back to Tasks
-        </Button>
+        <div className="min-h-screen bg-gray-100 p-6 animate-pulse">
+        <BackToHome />
         <div className="bg-white rounded-2xl shadow p-6">
-          <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-          <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
+            <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+            <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="h-20 bg-gray-200 rounded"></div>
             <div className="h-20 bg-gray-200 rounded"></div>
-          </div>
-          <div className="h-6 bg-gray-200 rounded w-1/4 mt-8 mb-4"></div>
-          <div className="space-y-3">
+            </div>
+            <div className="h-6 bg-gray-200 rounded w-1/4 mt-8 mb-4"></div>
+            <div className="space-y-3">
             <div className="h-10 bg-gray-200 rounded"></div>
             <div className="h-10 bg-gray-200 rounded"></div>
             <div className="h-10 bg-gray-200 rounded"></div>
-          </div>
+            </div>
         </div>
-      </div>
+        </div>
     );
+  }
+
+  const renderEditMode = () => {
+    if (!task) {
+        return;
+    }
+    return (
+        <div className="bg-white rounded-2xl shadow p-6">
+            <TaskEditMode
+                isEditMode={isEditMode}
+                updating={updating}
+                register={register}
+                handleSubmit={handleSubmit}
+                onSubmit={onSubmit}
+                errors={errors}
+                isSubmitting={isSubmitting}
+                taskTitle={task.title}
+                setIsEditMode={setIsEditMode}
+            />
+            <TaskDetails task={task} />
+            <TaskComments task={task} />
+        </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <Button
-        onClick={() => navigate({ to: '/' })}
-        className="mb-4"
-      >
-        ← Back to Tasks
-      </Button>
-
-      <div className="bg-white rounded-2xl shadow p-6">
-        <TaskEditMode
-          isEditMode={isEditMode}
-          updating={updating}
-          register={register}
-          handleSubmit={handleSubmit}
-          onSubmit={onSubmit}
-          errors={errors}
-          isSubmitting={isSubmitting}
-          taskTitle={task.title}
-          setIsEditMode={setIsEditMode}
-        />
-        <TaskDetails task={task} />
-        <TaskComments task={task} />
-      </div>
+        <BackToHome />
+        {loading ? renderLoading() : renderEditMode()}
     </div>
   );
 }
