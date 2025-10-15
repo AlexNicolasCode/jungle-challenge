@@ -143,6 +143,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       deadline: string;
       priority: TaskPriorityEnum;
       status: TaskStatusEnum;
+      users: UserEntity[];
     }) => {
     if (loading) {
       return;
@@ -154,7 +155,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
         deadline: task.deadline,
         priority: task.priority,
         status: task.status,
-        users: [],
+        users: task.users,
       });
       setPage(1);
       await loadTasks({});

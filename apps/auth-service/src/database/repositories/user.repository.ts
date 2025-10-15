@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-
-import { PasswordEntity, UserEntity } from '../entities';
 import { v4 } from 'uuid';
+
+import { PaginationInput } from 'src/shared/dtos';
+import { PasswordEntity, UserEntity } from '../entities';
 
 @Injectable()
 export class UserRepository {
@@ -17,6 +18,16 @@ export class UserRepository {
 
   checkIfExistsByEmail(email: string): Promise<boolean> {
     return this.userRepository.exists({ where: { email } });
+  }
+
+  async loadUsers({ page, size }: PaginationInput): Promise<{ users: UserEntity[]; count: number }> {
+    const [users, count] = await this.userRepository.findAndCount({
+      select: ['id', 'name'],
+      skip: (page - 1) * size,
+      take: size,
+      order: { id: 'ASC' },
+    });
+    return { users, count };
   }
 
   loadByEmail(email: string): Promise<UserEntity | null> {

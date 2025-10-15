@@ -1,15 +1,15 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToMany,
-  OneToMany,
+    Column,
+    CreateDateColumn,
+    Entity,
+    ManyToMany,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 
-import { TaskEntity } from './task.entity';
 import { CommentEntity } from './comment.entity';
+import { TaskEntity } from './task.entity';
 
 @Entity('users')
 export class UserEntity {

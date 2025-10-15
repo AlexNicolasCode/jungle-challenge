@@ -1,7 +1,7 @@
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { createRoot } from 'react-dom/client'
 
-import { AuthProvider, NotificationProvider, TaskProvider } from './contexts'
+import { AuthProvider, NotificationProvider, TaskProvider, UserProvider } from './contexts'
 import { routeTree } from './routeTree.gen'
 
 import './global.css'
@@ -19,11 +19,13 @@ if (!rootElement.innerHTML) {
   const root = createRoot(rootElement)
   root.render(
     <AuthProvider>
-    <TaskProvider>
-        <NotificationProvider>
-            <RouterProvider router={router} />
-        </NotificationProvider>
-    </TaskProvider>
+        <TaskProvider>
+            <NotificationProvider>
+                <UserProvider>
+                    <RouterProvider router={router} />
+                </UserProvider>
+            </NotificationProvider>
+        </TaskProvider>
     </AuthProvider>
   )
 }

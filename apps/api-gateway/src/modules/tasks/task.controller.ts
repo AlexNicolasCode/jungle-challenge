@@ -125,7 +125,6 @@ export class TaskController {
   ): Observable<CreateTaskOutputDto> {
     return this.taskClient.send('task.create', {
       ...dto,
-      users: [{ id: loggedUser.id, name: loggedUser.email }],
       loggedUser: { id: loggedUser.id, name: loggedUser.email },
     });
   }
