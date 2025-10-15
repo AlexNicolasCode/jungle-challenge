@@ -25,7 +25,7 @@ export class LoadUsersService {
             list: users,
             page: dto.page,
             size: dto.size,
-            totalPages: response.count,
+            totalPages: Math.ceil(response.count / dto.size),
         }
     } catch (error) {
       this.logger.error(error);
