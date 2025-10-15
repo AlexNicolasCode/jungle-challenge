@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -20,8 +20,8 @@ const createTaskSchema = z.object({
   deadline: z.string().optional(),
   responsibles: z.array(
     z.object({
-        id: z.string(),
-        name: z.string(),
+      id: z.string(),
+      name: z.string(),
     }),
   ),
 });
@@ -29,9 +29,10 @@ const createTaskSchema = z.object({
 type CreateTaskForm = z.infer<typeof createTaskSchema>;
 
 function CreateTaskPage() {
-  const { loadUsers, users, loading: userLoading } = useUser();
+  const { loadUsers, users, loading: userLoading, handleNextPage } = useUser();
   const { loading, createTask } = useTasks();
   const navigate = useNavigate();
+  const scrollRef = useRef<number>(0);
 
   const {
     register,
@@ -79,87 +80,94 @@ function CreateTaskPage() {
         <div className="h-5 w-20 bg-gray-200 rounded shimmer mb-2"></div>
         <div className="h-10 w-full rounded shimmer"></div>
       </div>
-
       <div>
         <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
         <div className="h-10 w-full rounded shimmer"></div>
       </div>
-
       <div>
         <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
         <div className="h-10 w-full rounded shimmer"></div>
       </div>
-
       <div className="col-span-2">
         <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
         <div className="h-10 w-full rounded shimmer"></div>
       </div>
-
       <div className="col-span-2">
         <div className="h-10 w-full rounded-xl shimmer"></div>
       </div>
     </div>
   );
 
-    const renderUserMultiSelect = () => {
-        if (userLoading) {
-            return (
-            <div>
-                <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
-                <div className="h-10 w-full rounded shimmer"></div>
-            </div>
-            );
-        }
+  const renderUserMultiSelect = () => {
+    if (userLoading) {
+      return (
+        <div>
+          <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
+          <div className="h-10 w-full rounded shimmer"></div>
+        </div>
+      );
+    }
 
-        return (
-            <div className="col-span-2">
-            <label className="font-medium text-gray-700 mb-2 block">
-                Responsible Users
-            </label>
-            <Controller
-                name="responsibles"
-                control={control}
-                render={({ field }) => (
-                <div className="flex flex-col gap-2 border rounded-lg p-3 bg-white max-h-48 overflow-y-auto">
-                    {users.map((user) => {
-                        const isChecked = field.value.some((u) => u.id === user.id);
-                        return (
-                            <label
-                            key={user.id}
-                            className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
-                            >
-                            <input
-                                type="checkbox"
-                                checked={isChecked}
-                                onChange={(e) => {
-                                if (e.target.checked) {
-                                    field.onChange([...field.value, user]);
-                                } else {
-                                    field.onChange(
-                                        field.value.filter((u) => u.id !== user.id)
-                                    );
-                                }
-                                }}
-                                className="w-4 h-4 text-blue-600 border-gray-300 rounded"
-                            />
-                            <span className="text-sm text-gray-800">{user.name}</span>
-                            </label>
-                        );
-                    })}
-                </div>
-                )}
-            />
-            {errors.responsibles && (
-                <p className="text-red-500 text-sm mt-1">
-                {errors.responsibles.message}
-                </p>
-            )}
-            <p className="text-xs text-gray-500 mt-1">
-                Select one or more users responsible for this task.
-            </p>
-            </div>
-        );
+    const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        scrollRef.current = scrollTop;
+        if (scrollTop + clientHeight >= scrollHeight - 20) {
+            handleNextPage();
+        }
     };
+
+    return (
+      <div className="col-span-2">
+        <label className="font-medium text-gray-700 mb-2 block">
+          Responsible Users
+        </label>
+        <Controller
+          name="responsibles"
+          control={control}
+          render={({ field }) => (
+            <div
+                className="flex flex-col gap-2 border rounded-lg p-3 bg-white max-h-48 overflow-y-auto"
+                onScroll={handleScroll}
+            >
+              {users.map((user) => {
+                const isChecked = field.value.some((u) => u.id === user.id);
+                return (
+                  <label
+                    key={user.id}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          field.onChange([...field.value, user]);
+                        } else {
+                          field.onChange(
+                            field.value.filter((u) => u.id !== user.id)
+                          );
+                        }
+                      }}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded"
+                    />
+                    <span className="text-sm text-gray-800">{user.name}</span>
+                  </label>
+                );
+              })}
+            </div>
+          )}
+        />
+        {errors.responsibles && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.responsibles.message}
+          </p>
+        )}
+        <p className="text-xs text-gray-500 mt-1">
+          Select one or more users responsible for this task.
+        </p>
+      </div>
+    );
+  };
 
   const renderPage = () => (
     <form

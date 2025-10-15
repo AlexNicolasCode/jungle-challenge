@@ -1,4 +1,4 @@
-import React, { JSX, useCallback, useState } from 'react';
+import React, { JSX, useState } from 'react';
 
 import { UserList } from '@/components';
 import { userApiClient } from '../../clients/users';
@@ -12,7 +12,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [maxPage, setMaxPage] = useState<number>(1);
     const [loading, setLoading] = useState(false);
 
-    const loadUsers = useCallback(async () => {
+    const loadUsers = async (newPage = 1) => {
         if (loading) {
             return;
         }
@@ -20,30 +20,31 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         try {
             const response = await userApiClient.get('', {
                 params: {
-                    page: page,
+                    page: newPage,
                     size: 10,
                 },
             });
             const users: UserEntity[] = response.data?.list ?? [];
-            const totalPages: number = response.data?.totalPagess ?? 1;
+            const totalPages: number = response.data?.totalPages ?? 1;
             setMaxPage(totalPages);
-            setUsers(users);
+            setPage(newPage);
+            setUsers((prev) => [...prev, ...users]);
         } catch (error) {
             console.log(error);
         } finally {
             setLoading(false);
         }
-    }, [page]);
+    };
 
     const handleNextPage = () => {
         const nextPage = page+1;
         if (
-        nextPage < 1 ||
-        nextPage > maxPage
+            nextPage < 1 ||
+            nextPage > maxPage
         ) {
-        return;
+            return;
         }
-        setPage(nextPage);
+        loadUsers(nextPage);
     }
 
     const renderUserList = (): JSX.Element => {
