@@ -1,14 +1,26 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ThrottlerModule } from '@nestjs/throttler';
 
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { dbConfig } from './database/config/database.config';
+import { AuditEntity } from './database/entities';
+import { AuditRepository } from './database/repositories';
 import { HealthzController } from './healthz.controller';
-import { AuthModule, NotificationModule, TaskModule, UserModule } from './modules';
+import {
+    AuthModule,
+    NotificationModule,
+    TaskModule,
+    UserModule,
+} from './modules';
+import { AuditInterceptor } from './shared/interceptors';
 import { JwtStrategy, LocalStrategy } from './shared/strategies';
 
 @Module({
   imports: [
+    dbConfig,
     ConfigModule.forRoot(),
     AuthModule,
     TaskModule,
@@ -32,8 +44,17 @@ import { JwtStrategy, LocalStrategy } from './shared/strategies';
         },
       },
     ]),
+    TypeOrmModule.forFeature([AuditEntity]),
   ],
   controllers: [HealthzController],
-  providers: [JwtStrategy, LocalStrategy],
+  providers: [
+    JwtStrategy,
+    LocalStrategy,
+    AuditRepository,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AuditInterceptor,
+    },
+  ],
 })
 export class AppModule {}
