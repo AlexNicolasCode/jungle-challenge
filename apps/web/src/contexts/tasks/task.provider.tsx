@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 import { taskApiClient } from '../../clients/tasks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { CommentEntity, TaskEntity, UserEntity } from '../../shared/types';
+import { CommentEntity, FilterProps, TaskEntity, UserEntity } from '../../shared/types';
 import { TasksContext } from './task.context';
 import { TaskProviderProps } from './task.types';
 
@@ -12,7 +12,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [commentsPage, setCommentPage] = useState<number>(1);
   const [tasks, setTasks] = useState<TaskEntity[]>([]);
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState<{ priority?: TaskPriorityEnum; status?: TaskStatusEnum; search?: string }>({});
+  const [query, setQuery] = useState<FilterProps>({});
   const [error, setError] = useState<string | undefined>();
 
   const sortedTasks = React.useMemo(() => {
@@ -22,14 +22,12 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       [TaskPriorityEnum.MEDIUM]: 2,
       [TaskPriorityEnum.LOW]: 3,
     };
-
     const statusOrder: Record<TaskStatusEnum, number> = {
       [TaskStatusEnum.TODO]: 0,
       [TaskStatusEnum.IN_PROGRESS]: 1,
       [TaskStatusEnum.REVIEW]: 2,
       [TaskStatusEnum.DONE]: 3,
     };
-
     return [...tasks].sort((a: TaskEntity, b: TaskEntity) => {
       const priorityA = priorityOrder[a.priority as TaskPriorityEnum];
       const priorityB = priorityOrder[a.priority as TaskPriorityEnum];
@@ -41,7 +39,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     });
   }, [tasks]);
 
-  const loadTasks = useCallback(async (newQuery: { priority?: TaskPriorityEnum; status?: TaskStatusEnum; search?: string }) => {
+  const loadTasks = useCallback(async (newQuery: FilterProps) => {
     if (loading) {
       return;
     }
@@ -145,7 +143,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       deadline: string;
       priority: TaskPriorityEnum;
       status: TaskStatusEnum;
-      users: UserEntity[];
     }) => {
     if (loading) {
       return;

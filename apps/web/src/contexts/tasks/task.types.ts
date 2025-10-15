@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 import { TaskPriorityEnum, TaskStatusEnum } from "../../shared/enums";
-import { CommentEntity, TaskEntity, UserEntity } from "../../shared/types";
+import { CommentEntity, TaskEntity } from "../../shared/types";
 
 export interface TasksContextType {
   tasks: TaskEntity[];
@@ -16,9 +16,6 @@ export interface TasksContextType {
     deadline: string;
     priority: TaskPriorityEnum;
     status: TaskStatusEnum;
-    createdAt: Date;
-    updatedAt: Date;
-    users: UserEntity[];
   }) => Promise<void>;
   updateTask: (taskId: string, data: {
     title: string;
@@ -26,9 +23,6 @@ export interface TasksContextType {
     deadline: string;
     priority: TaskPriorityEnum;
     status: TaskStatusEnum;
-    createdAt: Date;
-    updatedAt: Date;
-    users: UserEntity[];
   }) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
   loadCommentsByTaskId: (taskId: string) => Promise<CommentEntity[]>;

@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { BackToHome } from '@/components';
 import { Input } from '@/components/ui/input';
-import { useLoading, useTasks } from '../../hooks';
+import { useTasks } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
 
 export const Route = createFileRoute('/tasks/create')({
@@ -22,8 +22,7 @@ const createTaskSchema = z.object({
 type CreateTaskForm = z.infer<typeof createTaskSchema>;
 
 function CreateTaskPage() {
-  const { loading, renderLoading } = useLoading();
-  const { createTask, loadTasks } = useTasks();
+  const { loading, createTask } = useTasks();
   const navigate = useNavigate();
 
   const {
@@ -42,86 +41,112 @@ function CreateTaskPage() {
 
   const onSubmit = async (data: CreateTaskForm) => {
     try {
-      await createTask({
-          title: data.title,
-          priority: data.priority,
-          status: data.status,
-          deadline: data.deadline
-              ? new Date(data.deadline).toISOString()
-              : new Date().toISOString(),
-          users: [],
-      });
-      navigate({ to: '/' });
+        const deadline = data.deadline
+            ? new Date(data.deadline).toISOString()
+            : new Date().toISOString();
+        await createTask({
+            title: data.title,
+            priority: data.priority,
+            status: data.status,
+            deadline: deadline,
+        });
+        navigate({ to: '/' });
     } catch (err: any) {
-      alert(err.message || 'Failed to create task');
+        alert(err.message || 'Failed to create task');
     }
   };
 
-  const renderPage = () => (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <BackToHome />
-      <div className="bg-white rounded-2xl shadow p-6 max-w-2xl mx-auto">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-4">Create New Task</h1>
+  const renderLoading = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-pulse">
+      <div className="col-span-2">
+        <div className="h-5 w-20 bg-gray-200 rounded shimmer mb-2"></div>
+        <div className="h-10 w-full rounded shimmer"></div>
+      </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="col-span-2">
-            <label className="font-medium text-gray-700">Title</label>
-            <Input
-              {...register('title')}
-              type="text"
-            />
-            {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
-          </div>
+      <div>
+        <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
+        <div className="h-10 w-full rounded shimmer"></div>
+      </div>
 
-          <div>
-            <label className="font-medium text-gray-700">Priority</label>
-            <select
-              {...register('priority')}
-              className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
-            >
-              {Object.values(TaskPriorityEnum).map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div>
+        <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
+        <div className="h-10 w-full rounded shimmer"></div>
+      </div>
 
-          <div>
-            <label className="font-medium text-gray-700">Status</label>
-            <select
-              {...register('status')}
-              className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
-            >
-              {Object.values(TaskStatusEnum).map((s) => (
-                <option key={s} value={s}>
-                  {s.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="col-span-2">
+        <div className="h-5 w-24 bg-gray-200 rounded shimmer mb-2"></div>
+        <div className="h-10 w-full rounded shimmer"></div>
+      </div>
 
-          <div className="col-span-2">
-            <label className="font-medium text-gray-700">Deadline</label>
-            <Input
-              {...register('deadline')}
-              type="datetime-local"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="mt-6 col-span-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl"
-          >
-            {isSubmitting ? 'Creating...' : 'Create Task'}
-          </button>
-        </form>
+      <div className="col-span-2">
+        <div className="h-10 w-full rounded-xl shimmer"></div>
       </div>
     </div>
+  )
+
+  const renderPage = () => (
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="col-span-2">
+        <label className="font-medium text-gray-700">Title</label>
+        <Input
+            {...register('title')}
+            type="text"
+        />
+        {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>}
+        </div>
+
+        <div>
+        <label className="font-medium text-gray-700">Priority</label>
+        <select
+            {...register('priority')}
+            className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
+        >
+            {Object.values(TaskPriorityEnum).map((p) => (
+            <option key={p} value={p}>
+                {p}
+            </option>
+            ))}
+        </select>
+        </div>
+
+        <div>
+        <label className="font-medium text-gray-700">Status</label>
+        <select
+            {...register('status')}
+            className="mt-1 border border-gray-300 rounded px-3 py-2 w-full"
+        >
+            {Object.values(TaskStatusEnum).map((s) => (
+            <option key={s} value={s}>
+                {s.replace('_', ' ')}
+            </option>
+            ))}
+        </select>
+        </div>
+
+        <div className="col-span-2">
+        <label className="font-medium text-gray-700">Deadline</label>
+        <Input
+            {...register('deadline')}
+            type="datetime-local"
+        />
+        </div>
+
+        <button
+        type="submit"
+        disabled={isSubmitting}
+        className="mt-6 col-span-2 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl"
+        >
+        {isSubmitting ? 'Creating...' : 'Create Task'}
+        </button>
+    </form>
   );
 
-  return loading ? renderLoading('Creating task...') : renderPage();
+    return (
+        <div className="min-h-screen bg-gray-100 p-6">
+            <BackToHome />
+            {loading ? renderLoading() : renderPage()}
+        </div>
+    );
 }
 
 export default CreateTaskPage;

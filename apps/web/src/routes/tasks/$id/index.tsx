@@ -69,9 +69,6 @@ export function TaskDetailsPage() {
         deadline: task.deadline,
         priority: data.priority,
         status: data.status,
-        createdAt: task.createdAt,
-        updatedAt: task.updatedAt,
-        users: [],
       });
       setTask(updatedTask);
       setIsEditMode(false);
