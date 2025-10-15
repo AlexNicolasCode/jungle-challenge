@@ -40,10 +40,10 @@ export class UpdateTaskByIdUseCase {
         priority: dto.priority,
         status: dto.status,
       });
-      for (const users of storagedTask.users) {
+      for (const user of storagedTask.users) {
         this.notifyTaskUpdatedService.notifyTaskUpdate({
           taskId: dto.id,
-          authorId: users.id,
+          authorId: user.id,
           taskTitle: dto.title,
         });
       }
