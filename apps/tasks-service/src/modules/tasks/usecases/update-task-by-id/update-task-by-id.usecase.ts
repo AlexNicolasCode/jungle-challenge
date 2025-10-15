@@ -1,17 +1,17 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
 } from '@nestjs/common';
 
 import {
-  LoadTaskByIdService,
-  NotifyTaskUpdatedService,
-  UpdateTaskByIdService,
-} from '../services';
-import { UpdateTaskByIdInputDto } from '../dtos/inputs';
-import { UpdateTaskByIdOutputDto } from '../dtos/outputs';
+    LoadTaskByIdService,
+    NotifyTaskUpdatedService,
+    UpdateTaskByIdService,
+} from '../../services';
+import { UpdateTaskByIdUseCaseInputDto } from './update-task-by-id.input.dto';
+import { UpdateTaskByIdUseCaseOutputDto } from './update-task-by-id.output.dto';
 
 @Injectable()
 export class UpdateTaskByIdUseCase {
@@ -23,7 +23,9 @@ export class UpdateTaskByIdUseCase {
     private readonly notifyTaskUpdatedService: NotifyTaskUpdatedService,
   ) {}
 
-  async execute(dto: UpdateTaskByIdInputDto): Promise<UpdateTaskByIdOutputDto> {
+  async execute(
+    dto: UpdateTaskByIdUseCaseInputDto,
+  ): Promise<UpdateTaskByIdUseCaseOutputDto> {
     const storagedTask = await this.loadTaskByIdService.loadTaskById({
       taskId: dto.id,
     });

@@ -1,17 +1,17 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsDateString,
-  IsEnum,
-  IsArray,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
 import { Type } from 'class-transformer';
+import {
+    IsArray,
+    IsDateString,
+    IsEnum,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
+    ValidateNested,
+} from 'class-validator';
 
-import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 import { LoggedUserInputDto } from 'src/shared/dtos';
+import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
 export class TaskUserInputDto {
   @IsUUID()
@@ -22,7 +22,7 @@ export class TaskUserInputDto {
   name: string;
 }
 
-export class CreateTaskInputDto {
+export class CreateTaskUseCaseInputDto {
   @IsString()
   @IsNotEmpty()
   title: string;

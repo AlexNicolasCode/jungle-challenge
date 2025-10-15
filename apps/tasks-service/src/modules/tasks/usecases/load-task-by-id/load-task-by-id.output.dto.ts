@@ -1,6 +1,6 @@
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
-export type LoadTaskByIdOutputDto = {
+export type LoadTaskByIdUseCaseOutputDto = {
   title: string;
   deadline: Date;
   priority: TaskPriorityEnum;

@@ -6,11 +6,11 @@ import {
     IsString,
     IsUUID,
 } from 'class-validator';
-import { PaginationInput } from 'src/shared/dtos';
 
+import { PaginationInput } from 'src/shared/dtos';
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
-export class LoadTasksInputDto extends PaginationInput {
+export class LoadTasksUseCaseInputDto extends PaginationInput {
   @IsString()
   @IsOptional()
   description?: string;

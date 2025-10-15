@@ -1,18 +1,18 @@
 import { Type } from 'class-transformer';
 import {
-  IsString,
-  IsNotEmpty,
-  IsOptional,
-  IsDateString,
-  IsEnum,
-  IsUUID,
-  ValidateNested,
+    IsDateString,
+    IsEnum,
+    IsNotEmpty,
+    IsOptional,
+    IsString,
+    IsUUID,
+    ValidateNested,
 } from 'class-validator';
 import { LoggedUserInputDto } from 'src/shared/dtos';
 
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
 
-export class UpdateTaskByIdInputDto {
+export class UpdateTaskByIdUseCaseInputDto {
   @IsUUID()
   id: string;
 

@@ -1,13 +1,13 @@
 import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    NotFoundException,
 } from '@nestjs/common';
 
-import { DeleteTaskByIdInputDto } from '../dtos/inputs';
-import { DeleteTaskByIdOutputDto } from '../dtos/outputs';
-import { DeleteTaskByIdService, LoadTaskByIdService } from '../services';
+import { DeleteTaskByIdService, LoadTaskByIdService } from '../../services';
+import { DeleteTaskByIdUseCaseInputDto } from './delete-task-by-id.input.dto';
+import { DeleteTaskByIdUseCaseOutputDto } from './delete-task-by-id.output.dto';
 
 @Injectable()
 export class DeleteTaskByIdUseCase {
@@ -18,7 +18,9 @@ export class DeleteTaskByIdUseCase {
     private readonly deleteTaskByIdService: DeleteTaskByIdService,
   ) {}
 
-  async execute(dto: DeleteTaskByIdInputDto): Promise<DeleteTaskByIdOutputDto> {
+  async execute(
+    dto: DeleteTaskByIdUseCaseInputDto,
+  ): Promise<DeleteTaskByIdUseCaseOutputDto> {
     const taskId = dto.id;
     const task = await this.loadTaskByIdService.loadTaskById({ taskId });
     if (!task) {

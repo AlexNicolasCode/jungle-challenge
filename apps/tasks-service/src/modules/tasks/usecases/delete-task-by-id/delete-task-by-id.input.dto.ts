@@ -3,7 +3,7 @@ import { IsUUID, ValidateNested } from 'class-validator';
 
 import { LoggedUserInputDto } from 'src/shared/dtos';
 
-export class DeleteTaskByIdInputDto {
+export class DeleteTaskByIdUseCaseInputDto {
   @IsUUID()
   id: string;
 

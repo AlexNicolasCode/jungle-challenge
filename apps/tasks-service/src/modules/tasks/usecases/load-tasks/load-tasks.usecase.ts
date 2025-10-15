@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
 
-import { LoadTasksInputDto } from '../dtos/inputs';
-import { LoadTasksOutputDto } from '../dtos/outputs';
-import { LoadTasksService } from '../services';
+import { LoadTasksService } from '../../services';
+import { LoadTasksUseCaseInputDto } from './load-tasks.input.dto';
+import { LoadTasksUseCaseOutputDto } from './load-tasks.output.dto';
 
 @Injectable()
 export class LoadTasksUseCase {
   constructor(private readonly loadTasksService: LoadTasksService) {}
 
-  async execute(dto: LoadTasksInputDto): Promise<LoadTasksOutputDto> {
+  async execute(
+    dto: LoadTasksUseCaseInputDto,
+  ): Promise<LoadTasksUseCaseOutputDto> {
     const { count, tasks } = await this.loadTasksService.loadTasks(dto);
     return {
       list: tasks,

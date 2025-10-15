@@ -4,9 +4,9 @@ import {
     Logger,
 } from '@nestjs/common';
 
-import { CreateTaskInputDto } from '../dtos/inputs';
-import { CreateTaskOutputDto } from '../dtos/outputs';
-import { CreateTaskService, NotifyTaskCreatedService } from '../services';
+import { CreateTaskService, NotifyTaskCreatedService } from '../../services';
+import { CreateTaskUseCaseInputDto } from './create-task.input.dto';
+import { CreateTaskUseCaseOutputDto } from './create-task.output.dto';
 
 @Injectable()
 export class CreateTaskUseCase {
@@ -17,7 +17,9 @@ export class CreateTaskUseCase {
     private readonly notifyTaskCreatedService: NotifyTaskCreatedService,
   ) {}
 
-  async execute(dto: CreateTaskInputDto): Promise<CreateTaskOutputDto> {
+  async execute(
+    dto: CreateTaskUseCaseInputDto,
+  ): Promise<CreateTaskUseCaseOutputDto> {
     try {
       const task = await this.createTaskService.createTask(dto);
       for (const author of dto.users) {
