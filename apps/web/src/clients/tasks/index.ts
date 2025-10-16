@@ -1,5 +1,7 @@
 import axios from "axios";
+
 import { authApiClient } from "../auth";
+import { getTokens } from "@/shared/utils";
 
 
 const taskApiClient = axios.create({
@@ -8,11 +10,11 @@ const taskApiClient = axios.create({
 
 taskApiClient.interceptors.request.use(
         (config) => {
-            const storagedTokens = localStorage.getItem('tokens');
+            const storagedTokens = getTokens();
             if (!storagedTokens) {
                 return config;
             }
-            const { accessToken } = JSON.parse(storagedTokens);
+            const { accessToken } = storagedTokens;
             if (accessToken) {
                 config.headers.Authorization = `Bearer ${accessToken}`;
             }
@@ -28,11 +30,11 @@ taskApiClient.interceptors.response.use(
             const statusCode = error.response?.data?.statusCode;
             const isRetry = error.config.headers.retry;
             const isAuthenticatedError = statusCode === 401;
-            const storagedTokens = localStorage.getItem('tokens');
+            const storagedTokens = getTokens();
             if (!isAuthenticatedError || !storagedTokens || isRetry) {
                 return Promise.reject(error);
             }
-            const { refreshToken } = JSON.parse(storagedTokens);
+            const { refreshToken } = storagedTokens;
             const response = await authApiClient.post('/refresh', { refreshToken });
             const accessToken = response.data.accessToken;
             localStorage.setItem('tokens', JSON.stringify({

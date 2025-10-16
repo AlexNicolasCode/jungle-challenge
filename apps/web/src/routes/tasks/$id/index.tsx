@@ -2,20 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
 
 import { BackToHome } from '@/components';
 import { useTasks } from '../../../hooks';
-import { TaskPriorityEnum, TaskStatusEnum } from '../../../shared/enums';
 import { TaskEntity } from '../../../shared/types';
 import { TaskComments, TaskDetails, TaskEditMode } from './-components';
-
-const editTaskSchema = z.object({
-  title: z.string().min(3, 'Title is required'),
-  priority: z.enum(TaskPriorityEnum),
-  status: z.enum(TaskStatusEnum),
-});
-type EditTaskForm = z.infer<typeof editTaskSchema>;
+import { EditTaskForm, editTaskSchema } from './-schemas';
 
 export const Route = createFileRoute('/tasks/$id/')({
   component: TaskDetailsPage,
@@ -31,7 +23,7 @@ export function TaskDetailsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<EditTaskForm>({
     resolver: zodResolver(editTaskSchema),
   });
 
@@ -59,21 +51,21 @@ export function TaskDetailsPage() {
         }
     };
 
-  const onSubmit = async (data: EditTaskForm) => {
+  const onSubmit = async (form: EditTaskForm) => {
     if (!task) return;
     try {
       setUpdating(true);
-      const updatedTask = { ...task, ...data };
+      const updatedTask = { ...task, ...form };
       await updateTask(task.id, {
-        title: data.title,
+        title: form.title,
         deadline: task.deadline,
-        priority: data.priority,
-        status: data.status,
+        priority: form.priority,
+        status: form.status,
+        users: []
       });
       setTask(updatedTask);
       setIsEditMode(false);
     } catch (err) {
-      alert(err.message || 'Failed to update task');
     } finally {
       setUpdating(false);
     }

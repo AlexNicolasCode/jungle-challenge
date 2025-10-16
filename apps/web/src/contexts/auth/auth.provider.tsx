@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { authApiClient } from '../../clients/auth';
 import { AuthContext } from './auth.context';
 import { AuthProviderProps, Tokens } from './auth.types';
+import { getTokens } from '@/shared/utils';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [tokens, setTokens] = useState<Tokens | undefined>(JSON.parse(localStorage.getItem('tokens')));
+  const [tokens, setTokens] = useState<Tokens | undefined>(getTokens());
 
   const isAuthenticated = useMemo(() => !!tokens, [tokens]);
 
@@ -20,9 +21,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   }, [])
 
-  const registerUser = async (data: { name: string; email: string; password: string }) => {
+  const registerUser = async (form: { name: string; email: string; password: string }) => {
     try {
-      const response: AxiosResponse<Tokens> = await authApiClient.post('/register', data);
+      const response: AxiosResponse<Tokens> = await authApiClient.post('/register', form);
       setTokens(response.data);
       localStorage.setItem('tokens', JSON.stringify(response.data));
       return { success: true };
@@ -31,9 +32,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (data: { email: string; password: string }) => {
+  const login = async (form: { email: string; password: string }) => {
     try {
-      const response: AxiosResponse<Tokens> = await authApiClient.post('/login', data);
+      const response: AxiosResponse<Tokens> = await authApiClient.post('/login', form);
       setTokens(response.data);
       localStorage.setItem('tokens', JSON.stringify(response.data));
       return { success: true };
@@ -43,7 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    setTokens(null);
+    setTokens(undefined);
     localStorage.removeItem('tokens');
   };
 

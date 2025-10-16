@@ -1,18 +1,11 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { useAuth } from '../../hooks'
-
-const loginSchema = z.object({
-  email: z.email({ message: 'Invalid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-})
-
-type LoginFormValues = z.infer<typeof loginSchema>
+import { LoginFormValues, loginSchema } from './-schemas'
 
 export const Route = createFileRoute('/login/')({
   component: LoginPage,
@@ -30,13 +23,13 @@ function LoginPage() {
     resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = async (data: LoginFormValues) => {
-    const { success, error } = await login(data)
+  const onSubmit = async (form: LoginFormValues) => {
+    const { success, error } = await login(form);
     if (success) {
-      navigate({ to: '/' })
-      return
+      navigate({ to: '/' });
+      return;
     }
-    alert(error)
+    alert(error);
   }
 
   return (

@@ -1,16 +1,19 @@
+import React from 'react';
+import { FieldErrors, UseFormHandleSubmit, UseFormRegister } from 'react-hook-form';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import React from 'react';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../../shared/enums';
+import { EditTaskForm } from '../-schemas';
 
 interface TaskEditModeProps {
   isEditMode: boolean;
   updating: boolean;
-  register: any;
-  handleSubmit: any;
-  onSubmit: (data) => void;
-  errors: any;
+  register: UseFormRegister<EditTaskForm>;
+  handleSubmit: UseFormHandleSubmit<EditTaskForm>;
+  onSubmit: (form: EditTaskForm) => void;
+  errors: FieldErrors<EditTaskForm>;
   isSubmitting: boolean;
   taskTitle: string;
   setIsEditMode: (value: boolean) => void;

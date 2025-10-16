@@ -98,7 +98,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     setPage(nextPage);
   }
 
-  const loadTaskById = async (taskId: string) => {
+  const loadTaskById = async (taskId: string): Promise<TaskEntity | void> => {
     if (loading) {
       return;
     }
@@ -133,7 +133,8 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     } catch (err) {
         console.error(err);
     } finally {
-        setLoading(false);
+      setLoading(false);
+      return []
     }
   };
 
@@ -189,8 +190,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       deadline: string;
       priority: TaskPriorityEnum;
       status: TaskStatusEnum;
-      createdAt: Date;
-      updatedAt: Date;
       users: UserEntity[];
     }) => {
     if (loading) {

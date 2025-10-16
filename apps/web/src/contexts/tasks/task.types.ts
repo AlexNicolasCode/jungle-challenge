@@ -9,8 +9,8 @@ export interface TasksContextType {
   error?: string;
   loadTasks: (query: { priority?: TaskPriorityEnum; status?: TaskStatusEnum }) => Promise<void>;
   handleNextPage: () => void;
-  loadTaskById: (taskId: string) => Promise<TaskEntity | undefined>;
-  createTask: (data: {
+  loadTaskById: (taskId: string) => Promise<TaskEntity | void>;
+  createTask: (task: {
     title: string;
     description?: string;
     deadline: string;
@@ -18,12 +18,13 @@ export interface TasksContextType {
     status: TaskStatusEnum;
     users: UserEntity[];
   }) => Promise<void>;
-  updateTask: (taskId: string, data: {
+  updateTask: (taskId: string, task: {
     title: string;
     description?: string;
     deadline: string;
     priority: TaskPriorityEnum;
     status: TaskStatusEnum;
+    users: UserEntity[];
   }) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
   loadCommentsByTaskId: (taskId: string) => Promise<CommentEntity[]>;

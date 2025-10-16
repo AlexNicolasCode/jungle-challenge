@@ -35,7 +35,9 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
       extraHeaders: { authorization: `Bearer ${tokens.accessToken}` },
     });
     socket.on(`comment:new`, addComment);
-    return () => socket.close();
+    return () => {
+      socket.close();
+    }
   }, [task?.id, tokens?.accessToken]);
 
   const addComment = (payload: {

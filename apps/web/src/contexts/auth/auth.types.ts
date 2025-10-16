@@ -9,9 +9,9 @@ export type Tokens = {
 
 export interface AuthContextType {
   isAuthenticated: boolean;
-  tokens: Tokens | null;
-  login: (data: { email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
-  registerUser: (data: { name: string; email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
+  tokens: Tokens | undefined;
+  login: (form: { email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
+  registerUser: (form: { name: string; email: string; password: string }) => Promise<{ success: boolean; error?: any }>;
   logout: () => void;
 }
 

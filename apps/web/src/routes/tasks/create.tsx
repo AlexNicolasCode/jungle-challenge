@@ -15,8 +15,8 @@ export const Route = createFileRoute('/tasks/create')({
 
 const createTaskSchema = z.object({
   title: z.string().min(3, 'Title is required'),
-  priority: z.enum(TaskPriorityEnum),
-  status: z.enum(TaskStatusEnum),
+  priority: z.nativeEnum(TaskPriorityEnum),
+  status: z.nativeEnum(TaskStatusEnum),
   deadline: z.string().optional(),
   responsibles: z.array(
     z.object({
@@ -54,20 +54,18 @@ function CreateTaskPage() {
     loadUsers();
   }, []);
 
-  const onSubmit = async (data: CreateTaskForm) => {
+  const onSubmit = async (task: CreateTaskForm) => {
     try {
-      const deadline = data.deadline
-        ? new Date(data.deadline).toISOString()
+      const deadline = task.deadline
+        ? new Date(task.deadline).toISOString()
         : new Date().toISOString();
-
       await createTask({
-        title: data.title,
-        priority: data.priority,
-        status: data.status,
+        title: task.title,
+        priority: task.priority,
+        status: task.status,
         deadline,
-        users: data.responsibles,
+        users: task.responsibles,
       });
-
       navigate({ to: '/' });
     } catch (err: any) {
       alert(err.message || 'Failed to create task');

@@ -13,13 +13,12 @@ export class MicroserviceResponseInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const ctx = context.switchToHttp();
     const res = ctx.getResponse<Response>();
-
     return next.handle().pipe(
-      map((data) => {
-        if (data && typeof data.code === 'number') {
-          res.status(data.code);
+      map((response) => {
+        if (response && typeof response.code === 'number') {
+          res.status(response.code);
         }
-        return data;
+        return response;
       }),
     );
   }
