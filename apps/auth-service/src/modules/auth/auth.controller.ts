@@ -52,7 +52,7 @@ export class AuthController {
   }
 
   @MessagePattern('auth.validateUser')
-  validateUser(dto: ValidateUserInputDto): Promise<ValidateUserOutputDto> {
+  validateUser(dto: ValidateUserInputDto): Promise<ValidateUserOutputDto | void> {
     return this.validateUserUseCase.execute(dto);
   }
 }

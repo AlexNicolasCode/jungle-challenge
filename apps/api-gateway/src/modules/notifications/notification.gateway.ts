@@ -14,7 +14,7 @@ import { Server, Socket } from 'socket.io';
 
 import { LoggedUserOutputDto } from 'src/shared/decorators';
 
-@WebSocketGateway({ namespace: 'notifications', cors: true, origin: '*' })
+@WebSocketGateway({ namespace: 'notifications' })
 export class NotificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -29,20 +29,24 @@ export class NotificationGateway
   private readonly wss: Server;
 
   async handleConnection(client: Socket) {
-    const apiKey = client.handshake.headers['x-api-key'];
-    if (apiKey && apiKey === 'test') {
-      return;
+    try {
+      const apiKey = client.handshake.headers['x-api-key'];
+      if (apiKey && apiKey === 'test') {
+        return;
+      }
+      const accessToken = client.handshake.headers['authorization'];
+      const user: LoggedUserOutputDto = await firstValueFrom(
+        this.authClient.send('auth.profile', {
+          accessToken,
+        }),
+      );
+      if (!user?.id) {
+        return;
+      }
+      this.userSessions.push({ sessionId: client.id, userId: user.id });
+    } catch (error) {
+      console.log(error);
     }
-    const accessToken = client.handshake.headers['authorization'];
-    const user: LoggedUserOutputDto = await firstValueFrom(
-      this.authClient.send('auth.profile', {
-        accessToken,
-      }),
-    );
-    if (!user?.id) {
-      return;
-    }
-    this.userSessions.push({ sessionId: client.id, userId: user.id });
   }
 
   handleDisconnect(client: Socket) {

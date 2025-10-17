@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 
 import { LoginInputDto, LoginOutputDto } from '../dtos';
 import { GenerateAuthTokensService } from '../services';
@@ -16,6 +16,9 @@ export class LoginUseCase {
       email: dto.email,
       password: dto.password,
     });
+    if (!user) {
+      throw new UnprocessableEntityException();
+    }
     return this.generateAuthTokensService.generateAuthTokens({
       id: user.id,
       name: user.name,
