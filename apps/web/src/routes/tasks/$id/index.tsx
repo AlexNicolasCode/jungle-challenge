@@ -15,7 +15,7 @@ export const Route = createFileRoute('/tasks/$id/')({
 
 export function TaskDetailsPage() {
   const { id } = useParams({ from: '/tasks/$id/' });
-  const { loadTaskById, updateTask } = useTasks();
+  const { loadTaskById, updateTask, deleteTask } = useTasks();
   const navigate = useNavigate();
 
   const [task, setTask] = useState<TaskEntity | undefined>();
@@ -23,7 +23,12 @@ export function TaskDetailsPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [updating, setUpdating] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<EditTaskForm>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<EditTaskForm>({
     resolver: zodResolver(editTaskSchema),
   });
 
@@ -110,6 +115,7 @@ export function TaskDetailsPage() {
                 isSubmitting={isSubmitting}
                 taskTitle={task.title}
                 setIsEditMode={setIsEditMode}
+                deleteTask={() => deleteTask(task?.id)}
             />
             <TaskDetails task={task} />
             <TaskComments task={task} />

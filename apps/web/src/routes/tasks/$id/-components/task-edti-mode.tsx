@@ -17,6 +17,7 @@ interface TaskEditModeProps {
   isSubmitting: boolean;
   taskTitle: string;
   setIsEditMode: (value: boolean) => void;
+  deleteTask: () => void;
 }
 
 export const TaskEditMode: React.FC<TaskEditModeProps> = ({
@@ -29,6 +30,7 @@ export const TaskEditMode: React.FC<TaskEditModeProps> = ({
   isSubmitting,
   taskTitle,
   setIsEditMode,
+  deleteTask,
 }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -79,11 +81,18 @@ export const TaskEditMode: React.FC<TaskEditModeProps> = ({
                 </Button>
             </>
           ) : (
-            <Button
-              onClick={() => setIsEditMode(true)}
-            >
-              Edit
-            </Button>
+            <>
+              <Button
+                onClick={() => setIsEditMode(true)}
+              >
+                Edit
+              </Button>
+              <Button
+                onClick={() => deleteTask()}
+              >
+                Delete
+              </Button>
+            </>
           )}
         </div>
       </div>
