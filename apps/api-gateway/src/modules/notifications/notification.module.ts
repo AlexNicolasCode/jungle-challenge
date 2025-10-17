@@ -11,7 +11,7 @@ import { NotificationGateway } from './notification.gateway';
         transport: Transport.TCP,
         options: {
           host: process.env.AUTH_SERVICE ?? '127.0.0.1',
-          port: Number(process.env.AUTH_SERVICE_PORT) ?? 3002,
+          port: process.env.AUTH_SERVICE_PORT ? Number(process.env.AUTH_SERVICE_PORT) : 3002,
           retryAttempts: 10,
           retryDelay: 3000,
         },
