@@ -13,7 +13,7 @@ export class SendCommentService implements OnModuleInit, OnModuleDestroy {
   }
 
   private connect() {
-    this.apiGatewayWs = io(`http://localhost:3001/notifications`, {
+    this.apiGatewayWs = io(`http://${process.env.API_GATEWAY}:${process.env.API_GATEWAY_PORT}/notifications`, {
       extraHeaders: {
         'x-api-key': 'test',
       },

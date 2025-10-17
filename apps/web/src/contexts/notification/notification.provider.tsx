@@ -12,7 +12,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const [notification, setNotification] = useState<NotificationType | null>(null);
 
   useEffect(() => {
-    const socket = io(`http://localhost:3001/notifications`, {
+    const socket = io(`http://${process.env.API_GATEWAY}:${process.env.API_GATEWAY_PORT}/notifications`, {
         extraHeaders: {
             authorization: `Bearer ${tokens?.accessToken}`,
         }
