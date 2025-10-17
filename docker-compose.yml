@@ -124,7 +124,7 @@ services:
       db:
         condition: service_started
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
     networks:
       - challenge-network
 
@@ -157,6 +157,11 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     volumes: ['rabbitmq_data:/var/lib/rabbitmq']
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
 volumes:
   postgres_data:
