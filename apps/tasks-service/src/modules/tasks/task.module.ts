@@ -32,7 +32,7 @@ import { TaskRepository } from 'src/database/repositories';
         name: 'RABBITMQ_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://admin:admin@localhost:5672'],
+          urls: [process.env.RABBITMQ_URL ?? ''],
           queue: 'tasks',
           queueOptions: {
             durable: true,

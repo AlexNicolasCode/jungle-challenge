@@ -14,7 +14,7 @@ import { Server, Socket } from 'socket.io';
 
 import { LoggedUserOutputDto } from 'src/shared/decorators';
 
-@WebSocketGateway({ namespace: 'notifications', cors: true })
+@WebSocketGateway({ namespace: 'notifications', cors: true, origin: '*' })
 export class NotificationGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {

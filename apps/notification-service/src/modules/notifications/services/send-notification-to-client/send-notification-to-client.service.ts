@@ -15,7 +15,7 @@ export class SendNotificationToClientService
   }
 
   private connect() {
-    this.apiGatewayWs = io('http://localhost:3000/notifications', {
+    this.apiGatewayWs = io(`http://localhost:3001/notifications`, {
       extraHeaders: {
         'x-api-key': 'test',
       },

@@ -31,7 +31,7 @@ export const TaskComments: React.FC<TaskCommentsProps> = ({ task }) => {
 
   useEffect(() => {
     if (!task?.id || !tokens?.accessToken) return;
-    const socket = io('http://localhost:3000/notifications', {
+    const socket = io(`http://localhost:3001/notifications`, {
       extraHeaders: { authorization: `Bearer ${tokens.accessToken}` },
     });
     socket.on(`comment:new`, addComment);

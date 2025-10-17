@@ -1,21 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-
 import { AppModule } from './app.module';
-import { TcpExceptionFilter } from './shared/filters';
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-    AppModule,
-    {
-      transport: Transport.TCP,
-      options: {
-        port: 3001,
-      },
-    },
-  );
-  app.useGlobalFilters(new TcpExceptionFilter());
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: '*',
+  });
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -23,6 +14,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen();
+  await app.listen(process.env.PORT ? Number(process.env.PORT) : 3002);
 }
+
 bootstrap();

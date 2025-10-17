@@ -12,8 +12,8 @@ import { TaskController } from './task.controller';
         name: 'AUTH_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: '127.0.0.1',
-          port: 3001,
+          host: process.env.AUTH_SERVICE ?? '127.0.0.1',
+          port: Number(process.env.AUTH_SERVICE_PORT) ?? 3002,
           retryAttempts: 10,
           retryDelay: 3000,
         },
@@ -22,7 +22,7 @@ import { TaskController } from './task.controller';
         name: 'TASK_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: '127.0.0.1',
+          host: process.env.AUTH_SERVICE ?? '127.0.0.1',
           port: 3002,
           retryAttempts: 10,
           retryDelay: 3000,

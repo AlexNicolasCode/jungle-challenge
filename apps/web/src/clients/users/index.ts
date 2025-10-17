@@ -5,7 +5,7 @@ import { getTokens } from "@/shared/utils";
 
 
 const userApiClient = axios.create({
-        baseURL: 'http://localhost:3000/api/users',
+        baseURL: `http://localhost:3001/api/users`,
     });
 
 userApiClient.interceptors.request.use(

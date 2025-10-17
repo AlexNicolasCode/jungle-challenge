@@ -5,7 +5,7 @@ import { getTokens } from "@/shared/utils";
 
 
 const taskApiClient = axios.create({
-        baseURL: 'http://localhost:3000/api/tasks',
+        baseURL: `http://localhost:3001/api/tasks`,
     });
 
 taskApiClient.interceptors.request.use(
