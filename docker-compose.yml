@@ -121,6 +121,7 @@ services:
       - challenge-network
     restart: always
     volumes:
+      - ./init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: password
