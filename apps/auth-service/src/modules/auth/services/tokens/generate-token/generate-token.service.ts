@@ -18,11 +18,11 @@ export class GenerateTokenService {
     private readonly configService: ConfigService,
   ) {
     this.secret = this.configService.get<string>(
-      'JWT_ACCESS_SECRET',
+      'AUTH_JWT_SECRET',
       'fallback-secret',
     );
     this.refreshSecret = this.configService.get<string>(
-      'JWT_REFRESH_SECRET',
+      'AUTH_JWT_SECRET',
       'fallback-secret',
     );
     this.expiresRefreshTokenIn = this.configService.get<string>(
