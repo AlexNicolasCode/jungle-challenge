@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 
 export const dbConfig = TypeOrmModule.forRootAsync({
     inject: [ConfigService],
@@ -10,9 +11,9 @@ export const dbConfig = TypeOrmModule.forRootAsync({
       username: configService.get('DB_USER', 'postgres'),
       password: configService.get('DB_PASSWORD', 'password'),
       database: configService.get('DB_NAME', 'audit_db'),
-      entities: ['dist/database/entities/*.entity.js'],
-      migrations: ['dist/database/migrations/*.js'],
+      entities: [join(__dirname, '../entities/**/*.entity{.ts,.js}')],
+      migrations: [join(__dirname, '../migrations/*{.ts,.js}')],
       migrationsRun: true,
+      logging: false,
     }),
 });
-
