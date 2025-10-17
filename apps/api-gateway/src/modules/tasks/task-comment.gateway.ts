@@ -27,7 +27,7 @@ export class TaskCommentGateway {
     },
   ) {
     const apiKey = client.handshake.headers['x-api-key'];
-    if (!apiKey || apiKey !== 'test') {
+    if (!apiKey || apiKey !== process.env.WEBSOCKET_API_KEY) {
       return;
     }
     this.wss.emit(`tasks/${payload.taskId}/comments`, payload.comment);

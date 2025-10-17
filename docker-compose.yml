@@ -37,6 +37,7 @@ services:
       AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
       TASKS_SERVICE: ${TASKS_SERVICE}
       TASKS_SERVICE_PORT: ${TASKS_SERVICE_PORT}
+      WEBSOCKET_API_KEY: ${WEBSOCKET_API_KEY}
     depends_on:
       auth-service:
         condition: service_started
@@ -116,6 +117,7 @@ services:
     environment:
       NODE_ENV: development
       RABBITMQ_URL: ${RABBITMQ_URL}
+      WEBSOCKET_API_KEY: ${WEBSOCKET_API_KEY}
     depends_on:
       api-gateway:
         condition: service_started

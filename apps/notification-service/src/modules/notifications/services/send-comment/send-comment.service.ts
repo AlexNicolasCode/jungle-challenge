@@ -15,7 +15,7 @@ export class SendCommentService implements OnModuleInit, OnModuleDestroy {
   private connect() {
     this.apiGatewayWs = io(`http://${process.env.API_GATEWAY}:${process.env.API_GATEWAY_PORT}/notifications`, {
       extraHeaders: {
-        'x-api-key': 'test',
+        'x-api-key': process.env.WEBSOCKET_API_KEY,
       },
       reconnectionAttempts: 10,
       reconnectionDelay: 10_000,

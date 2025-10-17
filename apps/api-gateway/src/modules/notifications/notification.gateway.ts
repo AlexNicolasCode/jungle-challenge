@@ -31,7 +31,7 @@ export class NotificationGateway
   async handleConnection(client: Socket) {
     try {
       const apiKey = client.handshake.headers['x-api-key'];
-      if (apiKey && apiKey === 'test') {
+      if (apiKey && apiKey === process.env.WEBSOCKET_API_KEY) {
         return;
       }
       const accessToken = client.handshake.headers['authorization'];
@@ -51,7 +51,7 @@ export class NotificationGateway
 
   handleDisconnect(client: Socket) {
     const apiKey = client.handshake.headers['x-api-key'];
-    if (apiKey && apiKey === 'test') {
+    if (apiKey && apiKey === process.env.WEBSOCKET_API_KEY) {
       return;
     }
     const userSessions = this.userSessions.filter(
@@ -78,7 +78,7 @@ export class NotificationGateway
     },
   ) {
     const apiKey = client.handshake.headers['x-api-key'];
-    if (!apiKey || apiKey !== 'test') {
+    if (!apiKey || apiKey !== process.env.WEBSOCKET_API_KEY) {
       return;
     }
     const userSessions = this.userSessions.filter(
@@ -109,7 +109,7 @@ export class NotificationGateway
     },
   ) {
     const apiKey = client.handshake.headers['x-api-key'];
-    if (!apiKey || apiKey !== 'test') {
+    if (!apiKey || apiKey !== process.env.WEBSOCKET_API_KEY) {
       return;
     }
     const userSessions = this.userSessions.filter(
@@ -147,7 +147,7 @@ export class NotificationGateway
     },
   ) {
     const apiKey = client.handshake.headers['x-api-key'];
-    if (!apiKey || apiKey !== 'test') {
+    if (!apiKey || apiKey !== process.env.WEBSOCKET_API_KEY) {
       return;
     }
     for (const userId of payload.task.releatedUsersId) {
