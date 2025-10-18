@@ -3,19 +3,19 @@ FROM node:22-alpine AS base
 FROM base AS builder
 RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
-RUN yarn global add turbo
+RUN npm install -g turbo
 COPY . .
 RUN turbo prune web --docker
 
 FROM base AS installer
 RUN apk update && apk add --no-cache libc6-compat
 WORKDIR /app
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 COPY apps/web/package.json apps/web/package.json
 COPY --from=builder /app/out/json/ ./
-RUN yarn install --frozen-lockfile
+RUN npm install --frozen-lockfile
 COPY --from=builder /app/out/full/ ./
-RUN yarn turbo run build --filter=web
+RUN npx turbo run build --filter=web
 
 FROM base AS runner
 WORKDIR /app
