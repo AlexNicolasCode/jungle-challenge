@@ -8,7 +8,6 @@ import { BackToHome } from '@/components';
 import { Input } from '@/components/ui/input';
 import { useTasks, useUser } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
-import { UserEntity } from '@/shared/types';
 
 export const Route = createFileRoute('/tasks/create')({
   component: CreateTaskPage,
@@ -190,7 +189,7 @@ function CreateTaskPage() {
         <label className="font-medium text-gray-700">Description</label>
         <Input {...register('description')} type="text" />
         {errors.title && (
-          <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+          <p className="text-red-500 text-sm mt-1">{errors?.description?.message}</p>
         )}
       </div>
 
