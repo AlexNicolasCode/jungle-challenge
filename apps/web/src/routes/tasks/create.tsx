@@ -8,6 +8,7 @@ import { BackToHome } from '@/components';
 import { Input } from '@/components/ui/input';
 import { useTasks, useUser } from '../../hooks';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../shared/enums';
+import { UserEntity } from '@/shared/types';
 
 export const Route = createFileRoute('/tasks/create')({
   component: CreateTaskPage,
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/tasks/create')({
 const createTaskSchema = z.object({
   title: z.string().min(3, 'Title is required'),
   priority: z.nativeEnum(TaskPriorityEnum),
+  description: z.string().optional(),
   status: z.nativeEnum(TaskStatusEnum),
   deadline: z.string().optional(),
   responsibles: z.array(
@@ -62,9 +64,13 @@ function CreateTaskPage() {
       await createTask({
         title: task.title,
         priority: task.priority,
+        description: task.description,
         status: task.status,
         deadline,
-        users: task.responsibles,
+        users: task.responsibles.map((user) => ({
+          id: user.id,
+          name: user.name,
+        })),
       });
       navigate({ to: '/' });
     } catch (err: any) {
@@ -177,6 +183,14 @@ function CreateTaskPage() {
         <Input {...register('title')} type="text" />
         {errors.title && (
           <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+        )}
+      </div>
+
+      <div className="col-span-2">
+        <label className="font-medium text-gray-700">Description</label>
+        <Input {...register('description')} type="text" />
+        {errors.title && (
+          <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
         )}
       </div>
 
