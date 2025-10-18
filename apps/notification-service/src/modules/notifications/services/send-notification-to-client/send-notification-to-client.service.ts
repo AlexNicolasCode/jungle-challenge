@@ -17,7 +17,7 @@ export class SendNotificationToClientService
   private connect() {
     this.apiGatewayWs = io(`http://${process.env.API_GATEWAY}:${process.env.API_GATEWAY_PORT}/notifications`, {
       extraHeaders: {
-        'x-api-key': process.env.WEBSOCKET_API_KEY,
+        'x-api-key': process.env.WEBSOCKET_API_KEY ?? 'fallback',
       },
       reconnectionAttempts: 10,
       reconnectionDelay: 10_000,
