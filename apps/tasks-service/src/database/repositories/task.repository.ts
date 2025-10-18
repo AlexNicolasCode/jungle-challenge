@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { TaskPriorityEnum, TaskStatusEnum } from 'src/shared/enums';
@@ -8,6 +8,7 @@ import { TaskEntity, UserEntity } from '../entities';
 @Injectable()
 export class TaskRepository {
   constructor(
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     @InjectRepository(TaskEntity)
     private readonly taskRepository: Repository<TaskEntity>,

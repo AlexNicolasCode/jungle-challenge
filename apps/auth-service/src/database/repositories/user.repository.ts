@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -9,6 +9,7 @@ import { PasswordEntity, UserEntity } from '../entities';
 @Injectable()
 export class UserRepository {
   constructor(
+    @InjectDataSource()
     private readonly dataSource: DataSource,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
