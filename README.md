@@ -663,8 +663,8 @@ Cada microserviço possui seu próprio banco para garantir independência:
 ### Instalação local
 
 ```bash
-yarn
-yarn dev
+npm install
+npm run dev
 ```
 
 ### Usando Docker
