@@ -18,17 +18,23 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
         setLoading(true);
         try {
+            const newUsers: UserEntity[] = [];
+            const isFirstPage = !newPage || newPage === 1;
+            if (!isFirstPage) {
+                newUsers.concat(users);
+            }
             const response = await userApiClient.get('', {
                 params: {
                     page: newPage,
                     size: 10,
                 },
             });
-            const users: UserEntity[] = response.data?.list ?? [];
+            const apiUsers: UserEntity[] = response.data?.list ?? [];
+            newUsers.push(...apiUsers);
             const totalPages: number = response.data?.totalPages ?? 1;
             setMaxPage(totalPages);
             setPage(newPage);
-            setUsers((prev) => [...prev, ...users]);
+            setUsers(newUsers);
         } catch (error) {
             console.log(error);
         } finally {
