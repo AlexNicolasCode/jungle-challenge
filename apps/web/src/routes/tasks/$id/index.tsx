@@ -76,6 +76,15 @@ export function TaskDetailsPage() {
     }
   };
 
+  const handleDeleteTask = async () => {
+    const taskId = task?.id;
+    if (!taskId) {
+      return;
+    }
+    await deleteTask(taskId);
+    navigate({ to: '/' });
+  }
+
   const renderLoading = () => {
     return (
         <div className="min-h-screen bg-gray-100 p-6 animate-pulse">
@@ -115,7 +124,7 @@ export function TaskDetailsPage() {
                 isSubmitting={isSubmitting}
                 taskTitle={task.title}
                 setIsEditMode={setIsEditMode}
-                deleteTask={() => deleteTask(task?.id)}
+                deleteTask={handleDeleteTask}
             />
             <TaskDetails task={task} />
             <TaskComments task={task} />
