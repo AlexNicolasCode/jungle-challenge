@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { BackToHome } from '@/components';
 import { useTasks } from '../../../hooks';
 import { TaskEntity } from '../../../shared/types';
-import { TaskComments, TaskDetails, TaskEditMode } from './-components';
+import { TaskComments, TaskDetails } from './-components';
 import { EditTaskForm, editTaskSchema } from './-schemas';
 
 export const Route = createFileRoute('/tasks/$id/')({
@@ -21,7 +21,7 @@ export function TaskDetailsPage() {
   const [task, setTask] = useState<TaskEntity | undefined>();
   const [loading, setLoading] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [updating, setUpdating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const {
     register,
@@ -34,36 +34,39 @@ export function TaskDetailsPage() {
 
   useEffect(() => {
     fetchTask();
-    }, [id]);
+  }, [id]);
 
-    const fetchTask = async () => {
-        try {
-            const fetchedTask = await loadTaskById(id);
-            if (!fetchedTask) {
-                navigate({ to: '/' });
-                return;
-            }
-            setTask(fetchedTask);
-            reset({
-                title: fetchedTask.title,
-                priority: fetchedTask.priority,
-                status: fetchedTask.status,
-            });
-        } catch (err) {
+  const fetchTask = async () => {
+    try {
+        const fetchedTask = await loadTaskById(id);
+        if (!fetchedTask) {
             navigate({ to: '/' });
-        } finally {
-            setLoading(false);
+            return;
         }
-    };
+        setTask(fetchedTask);
+        reset({
+            title: fetchedTask.title,
+            deadline: fetchedTask.deadline,
+            description: fetchedTask.description,
+            priority: fetchedTask.priority,
+            status: fetchedTask.status,
+        });
+    } catch (err) {
+        navigate({ to: '/' });
+    } finally {
+        setLoading(false);
+    }
+  };
 
-  const onSubmit = async (form: EditTaskForm) => {
+  const submitForm = async (form: EditTaskForm) => {
     if (!task) return;
     try {
-      setUpdating(true);
+      setIsUpdating(true);
       const updatedTask = { ...task, ...form };
       await updateTask(task.id, {
         title: form.title,
-        deadline: task.deadline,
+        description: form.description,
+        deadline: form.deadline,
         priority: form.priority,
         status: form.status,
         users: []
@@ -71,8 +74,9 @@ export function TaskDetailsPage() {
       setTask(updatedTask);
       setIsEditMode(false);
     } catch (err) {
+      console.error(err);
     } finally {
-      setUpdating(false);
+      setIsUpdating(false);
     }
   };
 
@@ -87,8 +91,6 @@ export function TaskDetailsPage() {
 
   const renderLoading = () => {
     return (
-        <div className="min-h-screen bg-gray-100 p-6 animate-pulse">
-        <BackToHome />
         <div className="bg-white rounded-2xl shadow p-6">
             <div className="h-6 bg-gray-200 rounded w-1/3 mb-6"></div>
             <div className="h-4 bg-gray-200 rounded w-2/3 mb-4"></div>
@@ -104,7 +106,6 @@ export function TaskDetailsPage() {
             <div className="h-10 bg-gray-200 rounded"></div>
             </div>
         </div>
-        </div>
     );
   }
 
@@ -114,20 +115,19 @@ export function TaskDetailsPage() {
     }
     return (
         <div className="bg-white rounded-2xl shadow p-6">
-            <TaskEditMode
-                isEditMode={isEditMode}
-                updating={updating}
-                register={register}
-                handleSubmit={handleSubmit}
-                onSubmit={onSubmit}
-                errors={errors}
-                isSubmitting={isSubmitting}
-                taskTitle={task.title}
-                setIsEditMode={setIsEditMode}
-                deleteTask={handleDeleteTask}
+          <form onSubmit={handleSubmit(submitForm)}>
+            <TaskDetails
+              task={task}
+              isEditMode={isEditMode}
+              isUpdating={isUpdating}
+              isSubmitting={isSubmitting}
+              register={register}
+              errors={errors}
+              setIsEditMode={setIsEditMode}
+              deleteTask={handleDeleteTask}
             />
-            <TaskDetails task={task} />
-            <TaskComments task={task} />
+          </form>
+          <TaskComments task={task} />
         </div>
     )
   }

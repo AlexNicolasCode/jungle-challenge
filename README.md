@@ -524,7 +524,7 @@
 │       │   │   │   │   │   ├── index.ts
 │       │   │   │   │   │   ├── task-comment.tsx
 │       │   │   │   │   │   ├── task-details.tsx
-│       │   │   │   │   │   └── task-edti-mode.tsx
+│       │   │   │   │   │   └── task-header.tsx
 │       │   │   │   │   ├── -schemas.ts
 │       │   │   │   │   └── index.tsx
 │       │   │   │   └── create.tsx
