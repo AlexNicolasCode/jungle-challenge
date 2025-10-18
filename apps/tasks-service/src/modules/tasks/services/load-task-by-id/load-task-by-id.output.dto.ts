@@ -4,6 +4,7 @@ export type LoadTaskByIdOutputDto = {
   id: string;
   title: string;
   deadline: Date;
+  description?: string;
   priority: TaskPriorityEnum;
   status: TaskStatusEnum;
   createdAt: Date;

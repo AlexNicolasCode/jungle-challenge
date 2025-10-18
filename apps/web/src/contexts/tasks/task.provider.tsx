@@ -154,6 +154,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       await taskApiClient.post<TaskEntity>('', {
         title: task.title,
         deadline: task.deadline,
+        description: task.description,
         priority: task.priority,
         status: task.status,
         users: task.users,

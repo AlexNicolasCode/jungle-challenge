@@ -2,11 +2,11 @@ import React from 'react';
 import { TaskPriorityEnum, TaskStatusEnum } from '../../../../shared/enums';
 import { TaskEntity } from '../../../../shared/types';
 
-interface TaskDetailsProps {
+type TaskDetailsProps = {
   task: TaskEntity;
 }
 
-export const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
+export const TaskDetails: React.FC<TaskDetailsProps> = ({ task }: TaskDetailsProps) => {
   const statusColors: Record<TaskStatusEnum, string> = {
     [TaskStatusEnum.DONE]: 'bg-green-100 text-green-800',
     [TaskStatusEnum.IN_PROGRESS]: 'bg-yellow-100 text-yellow-800',
@@ -71,6 +71,12 @@ export const TaskDetails: React.FC<TaskDetailsProps> = ({ task }) => {
         >
           {task.status.replace('_', ' ')}
         </span>
+      </div>
+      <div>
+        <p className="font-medium">Description</p>
+        <p className="text-gray-600">
+          {task.description}
+        </p>
       </div>
       <div>
         <p className="font-medium">Deadline</p>

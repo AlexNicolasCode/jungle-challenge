@@ -18,6 +18,7 @@ export class LoadTaskByIdService {
     return {
       id: task.id,
       title: task.title,
+      description: task.description,
       deadline: task.deadline,
       priority: task.priority,
       status: task.status,
